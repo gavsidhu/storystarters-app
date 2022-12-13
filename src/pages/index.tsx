@@ -22,7 +22,7 @@ import Vercel from '~/svg/Vercel.svg';
 
 export default function HomePage() {
   return (
-    <Layout>
+    <Layout title='Home'>
       {/* <Seo templateTitle='Home' /> */}
       <Seo />
 
