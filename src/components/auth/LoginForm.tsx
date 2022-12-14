@@ -1,17 +1,22 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { FieldValues, useForm } from 'react-hook-form';
+
+import useAuth from '@/hooks/useAuth';
 
 import Button from '@/components/buttons/Button';
 import UnderlineLink from '@/components/links/UnderlineLink';
 
 const LoginForm = () => {
+  const{signInWithEmail} = useAuth()
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-console
-  const onSubmit = (data: any) => console.log(data);
+  const onSubmit = async (data: FieldValues) => {
+    await signInWithEmail(data.email,data.password)
+  }
   return (
     <>
       <div>

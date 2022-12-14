@@ -1,8 +1,10 @@
 import { Dialog, Transition } from '@headlessui/react';
+import axios from 'axios';
+import { doc, getDoc } from 'firebase/firestore';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, MouseEvent, useState } from 'react';
 import {
   HiBars3,
   HiFolder,
@@ -14,7 +16,15 @@ import {
   HiXMark,
 } from 'react-icons/hi2';
 
+import { db } from '@/lib/firebaseClient';
 import useAuth from '@/hooks/useAuth';
+import useSubscription from '@/hooks/useSubscription';
+
+import Button from '@/components/buttons/Button';
+import Pricing from '@/components/payments/Pricing';
+import Skeleton from '@/components/Skeleton';
+
+import { url } from '@/constant/url';
 
 const navigation = [
   { name: 'Home', href: '/', icon: HiHome },
@@ -36,11 +46,42 @@ type Props = {
 
 export default function Layout({ children, title }: Props) {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const subscription = useSubscription();
+  const handlePlanSelect = async (e: MouseEvent<HTMLButtonElement>) => {
+    const price = (e.target as HTMLButtonElement).id;
+    const userDoc = await getDoc(doc(db, 'users', user?.uid as string));
+    if (userDoc.data() === undefined) {
+      throw new Error('Customer does not exist');
+    }
+    const customerId = userDoc?.data()?.stripeId;
+    if (customerId && price) {
+      const createSession = await axios.post(
+        `${url}/api/payment/create-checkout-session`,
+        {
+          customerId,
+          priceId: price,
+        }
+      );
+
+      window.location.href = createSession.data.url;
+    }
+  };
+  if (loading) {
+    return <Skeleton className='h-screen w-screen' />;
+  }
   if (!user) {
     router.replace('/login');
     return <p>Unauthorized</p>;
+  }
+  if (subscription === null) {
+    return (
+      <div>
+        <Button onClick={logout}>Logout</Button>
+        <Pricing handlePlanSelect={handlePlanSelect} />
+      </div>
+    );
   }
   return (
     <>

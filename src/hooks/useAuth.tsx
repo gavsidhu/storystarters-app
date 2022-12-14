@@ -14,7 +14,6 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import { auth, db } from '@/lib/firebaseClient';
 
-import { url } from '@/constant/url';
 
 interface IAuth {
   user: User | null;
@@ -139,7 +138,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(result.user);
         const idToken = await result.user.getIdToken();
         axios.defaults.headers.common['Authorization'] = idToken;
-        await axios.get(`${url}/api/auth/login`);
         router.push('/');
       })
       .catch((error) => {

@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import useSubscription from '@/hooks/useSubscription';
+
 import Layout from '@/components/layout/Layout';
 import ArrowLink from '@/components/links/ArrowLink';
 import ButtonLink from '@/components/links/ButtonLink';
@@ -21,6 +23,7 @@ import Vercel from '~/svg/Vercel.svg';
 // to customize the default configuration.
 
 export default function HomePage() {
+  useSubscription()
   return (
     <Layout title='Home'>
       {/* <Seo templateTitle='Home' /> */}

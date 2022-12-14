@@ -8,12 +8,12 @@ import {
 } from 'react';
 
 interface IRegisterFlow {
-  priceId: string;
-  setPriceId: Dispatch<SetStateAction<string>>;
+  priceId: string | null;
+  setPriceId: Dispatch<SetStateAction<string | null>>;
 }
 
 const RegisterFlowContext = createContext<IRegisterFlow>({
-  priceId: '',
+  priceId: null,
   setPriceId: () => {
     //Change price Id
   },
@@ -26,14 +26,14 @@ interface RegisterFlowProviderProps {
 export const RegisterFlowProvider = ({
   children,
 }: RegisterFlowProviderProps) => {
-  const [priceId, setPriceId] = useState('');
+  const [priceId, setPriceId] = useState<string | null>(null);
 
   const memoedValue = useMemo(
     () => ({
       priceId,
       setPriceId,
     }),
-    [priceId]
+    [priceId, setPriceId]
   );
   return (
     <RegisterFlowContext.Provider value={memoedValue}>

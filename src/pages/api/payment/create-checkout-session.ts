@@ -35,7 +35,7 @@ export default async function handler(
     res.json({ url: session.url });
   } catch (e) {
     res.status(400).json({
-      code: 'customer_creation_failed',
+      code: 'session_creation_failed',
       error: e,
     });
   }
