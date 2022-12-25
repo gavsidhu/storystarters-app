@@ -43,11 +43,12 @@ export const TextEditorMenu = ({ editor }: Props) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     const text =
-      typeof window != 'undefined' || null
-        ? window.getSelection().toString()
-        : '';
+      typeof window != 'undefined' ? window?.getSelection()?.toString() : '';
+    if (text === undefined) {
+      return;
+    }
 
-    if (text.length > 0) {
+    if (text.length > 0 && text) {
       try {
         const res = await axios.post(
           `http://localhost:3000/api/generate/expand`,
