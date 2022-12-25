@@ -7,10 +7,9 @@ import {
 import { useEffect, useState } from 'react';
 
 import { db } from '@/lib/firebaseClient';
-import axiosApiInstance from '@/lib/updateToken';
 import useAuth from '@/hooks/useAuth';
 
-import { url } from '@/constant/url';
+import { plans } from '@/constant/plans';
 
 const getData = async (docRef: DocumentReference<DocumentData>) => {
   const data = await getDoc(docRef);
@@ -20,28 +19,33 @@ const getData = async (docRef: DocumentReference<DocumentData>) => {
 const useSubscription = () => {
   const { user } = useAuth();
   const [subscription, setSubscription] = useState<object | null>(null);
+  const [subLoading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
+      setLoading(true);
       const docRef = doc(db, 'users', user?.uid as string);
       getData(docRef).then(async (data) => {
-        const res = await axiosApiInstance.post(
-          `${url}/api/payment/check-subscription`,
-          {
-            customerId: data.data()?.stripeId,
-          }
-        );
-        if (res.data.subscriptions.data.length > 0) {
-          const status = res.data.subscriptions.data[0].status;
-          const priceId = res.data.subscriptions.data[0].plan.id;
-          setSubscription({ status: status, priceId: priceId });
+        const plan = data.data()?.subscription.planId;
+        if (data.data() === undefined) {
+          setSubscription(null);
+          setLoading(false);
+        }
+        if (
+          plan === plans.tier1 ||
+          plan === plans.tier2 ||
+          plan === plans.tier3
+        ) {
+          setSubscription({ status: data.data()?.subscription.status, plan });
+          setLoading(false);
         } else {
           setSubscription(null);
+          setLoading(false);
         }
       });
     }
   }, [user]);
-  return subscription;
+  return { subscription, subLoading };
 };
 
 export default useSubscription;
