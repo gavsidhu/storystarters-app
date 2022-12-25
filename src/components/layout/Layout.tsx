@@ -48,7 +48,7 @@ export default function Layout({ children, title }: Props) {
   const router = useRouter();
   const { user, logout, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const subscription = useSubscription();
+  const { subscription, subLoading } = useSubscription();
   const handlePlanSelect = async (e: MouseEvent<HTMLButtonElement>) => {
     const price = (e.target as HTMLButtonElement).id;
     const userDoc = await getDoc(doc(db, 'users', user?.uid as string));
@@ -68,17 +68,21 @@ export default function Layout({ children, title }: Props) {
       window.location.href = createSession.data.url;
     }
   };
-  if (loading) {
+  if (loading || subLoading) {
     return <Skeleton className='h-screen w-screen' />;
   }
   if (!user) {
     router.replace('/login');
-    return <p>Unauthorized</p>;
+    return <Skeleton className='h-screen w-screen' />;
   }
   if (subscription === null) {
     return (
       <div>
-        <Button onClick={logout}>Logout</Button>
+        <div className='w-full py-6 px-4 text-right'>
+          <Button className='text-right' onClick={logout}>
+            Logout
+          </Button>
+        </div>
         <Pricing handlePlanSelect={handlePlanSelect} />
       </div>
     );
@@ -290,7 +294,7 @@ export default function Layout({ children, title }: Props) {
             </button>
           </div>
           <main className='flex-1'>
-            <div className='py-6'>
+            <div className='min-h-screen py-6'>
               <div className='mx-auto px-4 sm:px-6 md:px-8'>
                 <h1 className='text-4xl font-bold text-gray-900'>{title}</h1>
               </div>
