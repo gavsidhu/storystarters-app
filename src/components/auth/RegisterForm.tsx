@@ -7,10 +7,11 @@ import PrimaryLink from '@/components/links/PrimaryLink';
 
 interface Props {
   onSubmit: (data: FieldValues) => {
-    //Submit data to firebase an create user
+    //function that submits data to firebase auth and creates user
   };
 }
 const RegisterForm = ({ onSubmit }: Props) => {
+  //Form validation
   const {
     register,
     handleSubmit,

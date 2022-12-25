@@ -7,7 +7,8 @@ import Button from '@/components/buttons/Button';
 import UnderlineLink from '@/components/links/UnderlineLink';
 
 const LoginForm = () => {
-  const{signInWithEmail} = useAuth()
+  const { signInWithEmail } = useAuth();
+  //Form validation
   const {
     register,
     handleSubmit,
@@ -15,8 +16,8 @@ const LoginForm = () => {
   } = useForm();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-console
   const onSubmit = async (data: FieldValues) => {
-    await signInWithEmail(data.email,data.password)
-  }
+    await signInWithEmail(data.email, data.password);
+  };
   return (
     <>
       <div>
