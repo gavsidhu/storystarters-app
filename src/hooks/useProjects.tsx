@@ -30,6 +30,9 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
   const [projectLoading, setProjectLoading] = useState<boolean>(true);
   const [projects, setProjects] = useState<Project[] | null>(null);
   useEffect(() => {
+    if (!user) {
+      return;
+    }
     const q = query(
       collection(db, 'projects'),
       where('uid', '==', user?.uid),

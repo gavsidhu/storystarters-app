@@ -43,6 +43,8 @@ const useSubscription = () => {
           setLoading(false);
         }
       });
+    } else {
+      return;
     }
   }, [user]);
   return { subscription, subLoading };

@@ -1,7 +1,9 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 import { HiArrowLongRight } from 'react-icons/hi2';
 
+import useAuth from '@/hooks/useAuth';
 import useProjects from '@/hooks/useProjects';
 import useSubscription from '@/hooks/useSubscription';
 
@@ -68,8 +70,14 @@ const popularResources = [
 ];
 
 export default function HomePage() {
+  const { user } = useAuth();
+  const router = useRouter();
   const { projects, projectLoading } = useProjects();
   useSubscription();
+  if (!user) {
+    router.replace('/login');
+    return;
+  }
   if (projectLoading) {
     return <Skeleton />;
   }
