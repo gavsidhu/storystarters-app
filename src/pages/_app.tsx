@@ -1,11 +1,12 @@
 import { AppProps } from 'next/app';
 
 import '@/styles/globals.css';
-// !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
-import '@/styles/colors.css';
 
 import { AuthProvider } from '@/hooks/useAuth';
+import { ProjectProvider } from '@/hooks/useProjects';
 import { RegisterFlowProvider } from '@/hooks/useRegisterFlow';
+
+import GlobalDndContext from '@/context/DnDContext';
 
 /**
  * !STARTERCONF info
@@ -16,7 +17,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <RegisterFlowProvider>
       <AuthProvider>
-        <Component {...pageProps} />
+        <ProjectProvider>
+          <GlobalDndContext>
+            <Component {...pageProps} />
+          </GlobalDndContext>
+        </ProjectProvider>
       </AuthProvider>
     </RegisterFlowProvider>
   );
