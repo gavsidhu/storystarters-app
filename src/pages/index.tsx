@@ -1,13 +1,17 @@
+import Link from 'next/link';
 import * as React from 'react';
+import { HiArrowLongRight } from 'react-icons/hi2';
 
+import useProjects from '@/hooks/useProjects';
 import useSubscription from '@/hooks/useSubscription';
 
+import EmptyState from '@/components/home/EmptyState';
+import ProjectsTable from '@/components/home/ProjectsTable';
 import Layout from '@/components/layout/Layout';
-import ArrowLink from '@/components/links/ArrowLink';
-import ButtonLink from '@/components/links/ButtonLink';
-import UnderlineLink from '@/components/links/UnderlineLink';
-import UnstyledLink from '@/components/links/UnstyledLink';
+import ResourceCard from '@/components/resources/ResourceCard';
 import Seo from '@/components/Seo';
+import Skeleton from '@/components/Skeleton';
+import ToolCard from '@/components/tools/ToolCard';
 
 /**
  * SVGR Support
@@ -16,62 +20,120 @@ import Seo from '@/components/Seo';
  * You can override the next-env if the type is important to you
  * @see https://stackoverflow.com/questions/68103844/how-to-override-next-js-svg-module-declaration
  */
-import Vercel from '~/svg/Vercel.svg';
 
 // !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
 // Before you begin editing, follow all comments with `STARTERCONF`,
 // to customize the default configuration.
 
+const popularTools = [
+  {
+    id: '1',
+    title: 'Story idea generator',
+    description: 'generates story ideas',
+    href: '#',
+  },
+  {
+    id: '2',
+    title: 'Character Creator',
+    description: 'Create memorable character',
+    href: '#',
+  },
+  {
+    id: '3',
+    title: 'Scene builder',
+    description: 'builds scenses',
+    href: '#',
+  },
+];
+
+const popularResources = [
+  {
+    id: '1',
+    title: 'Prompt library',
+    description: 'Hundreds of writing prompts',
+    href: '#',
+  },
+  {
+    id: '2',
+    title: "Hero's journey template",
+    description: "Template of hero's journey story structure",
+    href: '#',
+  },
+  {
+    id: '3',
+    title: 'Three act structure template',
+    description: 'Template of the three act story structure',
+    href: '#',
+  },
+];
+
 export default function HomePage() {
-  useSubscription()
+  const { projects, projectLoading } = useProjects();
+  useSubscription();
+  if (projectLoading) {
+    return <Skeleton />;
+  }
   return (
     <Layout title='Home'>
       {/* <Seo templateTitle='Home' /> */}
       <Seo />
-
-      <main>
-        <section className='bg-white'>
-          <div className='layout flex min-h-screen flex-col items-center justify-center text-center'>
-            <Vercel className='text-5xl' />
-            <h1 className='mt-4'>
-              Next.js + Tailwind CSS + TypeScript Starter
-            </h1>
-            <p className='mt-2 text-sm text-gray-800'>
-              A starter for Next.js, Tailwind CSS, and TypeScript with Absolute
-              Import, Seo, Link component, pre-configured with Husky{' '}
-            </p>
-            <p className='mt-2 text-sm text-gray-700'>
-              <ArrowLink href='https://github.com/theodorusclarence/ts-nextjs-tailwind-starter'>
-                See the repository
-              </ArrowLink>
-            </p>
-
-            <ButtonLink className='mt-6' href='/components' variant='light'>
-              See all components
-            </ButtonLink>
-
-            <UnstyledLink
-              href='https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Ftheodorusclarence%2Fts-nextjs-tailwind-starter'
-              className='mt-4'
+      <div className='mx-auto lg:max-w-7xl '>
+        <div className='mt-4 py-6'>
+          {!projects ? <EmptyState /> : <ProjectsTable projects={projects} />}
+        </div>
+        <div>
+          <div className='flex flex-row justify-between border-b-2'>
+            <div className='px-1 py-2'>
+              <h2 className='text-2xl font-semibold'>Popular tools</h2>
+            </div>
+            <Link
+              href='/tools'
+              className='flex flex-row items-center space-x-2 px-1 py-2'
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                width='92'
-                height='32'
-                src='https://vercel.com/button'
-                alt='Deploy with Vercel'
-              />
-            </UnstyledLink>
-
-            <footer className='absolute bottom-2 text-gray-700'>
-              © {new Date().getFullYear()} By{' '}
-              <UnderlineLink href='https://theodorusclarence.com?ref=tsnextstarter'>
-                Theodorus Clarence
-              </UnderlineLink>
-            </footer>
+              <p>See all tools</p>
+              <HiArrowLongRight className='h-4 w-4' />
+            </Link>
           </div>
-        </section>
-      </main>
+          <div className='grid gap-4 py-6 lg:grid-cols-3'>
+            {popularTools.map((tool) => {
+              return (
+                <ToolCard
+                  key={tool.id}
+                  href={tool.href}
+                  title={tool.title}
+                  description={tool.description}
+                />
+              );
+            })}
+          </div>
+        </div>
+        <div>
+          <div className='flex flex-row justify-between border-b-2'>
+            <div className='px-1 py-2'>
+              <h2 className='text-2xl font-semibold'>Popular resources</h2>
+            </div>
+            <Link
+              href='/resources'
+              className='flex flex-row items-center space-x-2 px-1 py-2'
+            >
+              <p>See all resources</p>
+              <HiArrowLongRight className='h-4 w-4' />
+            </Link>
+          </div>
+          <div className='grid gap-4 py-6 lg:grid-cols-3'>
+            {popularResources.map((resource) => {
+              return (
+                <ResourceCard
+                  key={resource.id}
+                  href={resource.href}
+                  title={resource.title}
+                  description={resource.description}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </Layout>
   );
 }
