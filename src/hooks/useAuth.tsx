@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
 import axios from 'axios';
+import { FirebaseError } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -13,7 +13,6 @@ import { useRouter } from 'next/router';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import { auth, db } from '@/lib/firebaseClient';
-
 
 interface IAuth {
   user: User | null;
@@ -123,8 +122,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const idToken = await result.user.getIdToken();
         axios.defaults.headers.common['Authorization'] = idToken;
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((error: FirebaseError) => {
+        throw new Error(error.message);
         //   if (error.message === "Firebase: Error (auth/email-already-in-use).")
         //     addAlert("Email already in use", "error", 3000);
       })
@@ -140,8 +139,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         axios.defaults.headers.common['Authorization'] = idToken;
         router.push('/');
       })
-      .catch((error) => {
-        console.error(error);
+      .catch((error: FirebaseError) => {
+        throw new Error(error.message);
         // if (error.message === "Firebase: Error (auth/wrong-password).")
         //   addAlert("Invalid email or password", "error", 3000);
       })
@@ -154,7 +153,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signOut(auth)
       .then(async () => {
         delete axios.defaults.headers.common['Authorization'];
-        console.log('logged out');
         setUser(null);
       })
       .catch((error) => setError(error.message))
