@@ -2,6 +2,8 @@ import Stripe from 'stripe';
 
 import { admin } from '@/lib/firebaseAdmin';
 
+import { plans } from '@/constant/plans';
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15',
 });
@@ -25,9 +27,9 @@ export const handleTokens = async (
     .collection('users')
     .where('stripeId', '==', customerId)
     .get();
-  const tier1Price = '';
-  const tier2Price = '';
-  const tier3Price = planId;
+  const tier1Price = plans.tier1;
+  const tier2Price = plans.tier2;
+  const tier3Price = plans.tier3;
   switch (billing_reason) {
     case 'subscription_create': {
       if (planId === tier1Price) {
