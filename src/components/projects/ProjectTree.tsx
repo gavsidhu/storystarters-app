@@ -1,5 +1,5 @@
 import { Menu } from '@headlessui/react';
-import { NodeModel, Tree } from '@minoru/react-dnd-treeview';
+import { DropOptions, NodeModel, Tree } from '@minoru/react-dnd-treeview';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { doc, DocumentData, getDoc, setDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
@@ -76,15 +76,21 @@ const ProjectTree = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treeData]);
 
-  const handleDrop = async (newTree: NodeModel[]) => {
+  const handleDrop = async (
+    newTree: NodeModel[],
+    { dragSourceId, dropTargetId }: DropOptions<unknown>
+  ) => {
+    const docRef = doc(db, `projects/${projectId}/documents/${dragSourceId}`);
+    await setDoc(docRef, { node: { parent: dropTargetId } }, { merge: true });
+
     const arr = [];
     for (let i = 0; i < newTree.length; i++) {
       arr.push(newTree[i].id);
     }
 
-    const docRef = doc(db, `projects/${projectId}`);
+    const projRef = doc(db, `projects/${projectId}`);
 
-    await setDoc(docRef, { sort: arr }, { merge: true });
+    await setDoc(projRef, { sort: arr }, { merge: true });
     setTreeData(newTree);
   };
 
