@@ -79,7 +79,7 @@ export default function HomePage() {
     return;
   }
   if (projectLoading) {
-    return <Skeleton />;
+    return <Skeleton className='h-screen w-screen' />;
   }
   return (
     <Layout title='Home'>
