@@ -1,14 +1,14 @@
 import { Card } from 'flowbite-react';
-import React from 'react';
+import React, { ComponentProps } from 'react';
 
-type Props = {
+interface Props extends ComponentProps<'div'> {
   href: string;
   title: string;
   description: string;
-};
-const ToolCard = ({ href, title, description }: Props) => {
+}
+const ToolCard = ({ href, title, description, ...props }: Props) => {
   return (
-    <Card href={href} className='p-5 shadow-none hover:shadow-lg'>
+    <Card href={href} {...props} className='p-5 shadow-none hover:shadow-lg'>
       <div>
         <h3 className='font-body text-xl font-extrabold tracking-tight text-gray-900'>
           {title}
