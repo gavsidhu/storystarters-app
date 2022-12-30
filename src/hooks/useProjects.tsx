@@ -27,12 +27,13 @@ interface ProjectProviderProps {
 }
 export const ProjectProvider = ({ children }: ProjectProviderProps) => {
   const { user } = useAuth();
-  const [projectLoading, setProjectLoading] = useState<boolean>(true);
+  const [projectLoading, setProjectLoading] = useState<boolean>(false);
   const [projects, setProjects] = useState<Project[] | null>(null);
   useEffect(() => {
     if (!user) {
       return;
     }
+    setProjectLoading(true);
     const q = query(
       collection(db, 'projects'),
       where('uid', '==', user?.uid),
