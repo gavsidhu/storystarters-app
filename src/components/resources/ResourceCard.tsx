@@ -1,11 +1,11 @@
 import { Card } from 'flowbite-react';
-import React from 'react';
+import React, { ComponentProps } from 'react';
 
-type Props = {
+interface Props extends ComponentProps<'div'> {
   href: string;
   title: string;
   description: string;
-};
+}
 const ResourceCard = ({ href, title, description }: Props) => {
   return (
     <Card href={href} className='p-5 shadow-none hover:shadow-lg'>
