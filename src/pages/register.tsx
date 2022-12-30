@@ -18,32 +18,34 @@ const Register = () => {
 
   const nextFormStep = () => setFormStep((currentStep) => currentStep + 1);
 
-  const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
+  // const prevFormStep = () => setFormStep((currentStep) => currentStep - 1);
 
   const handlePlanSelect = () => {
     nextFormStep();
   };
   const onSubmit = async (data: FieldValues) => {
-    const createCustomer = await axios.post(
-      `${url}/api/payment/create-customer`,
-      {
-        email: data.email,
-        name: data.firstname + ' ' + data.lastname,
-      }
-    );
+    // const createCustomer = await axios.post(
+    //   `${url}/api/payment/create-customer`,
+    //   {
+    //     email: data.email,
+    //     name: data.firstname + ' ' + data.lastname,
+    //   }
+    // );
 
-    await registerWithEmail(
+    const stripeId = await registerWithEmail(
       data.email,
       data.password,
       data.firstname,
-      data.lastname,
-      createCustomer.data.customer.id
+      data.lastname
     );
+    if (stripeId === undefined) {
+      return;
+    }
 
     const createSession = await axios.post(
       `${url}/api/payment/create-checkout-session`,
       {
-        customerId: createCustomer.data.customer.id,
+        customerId: stripeId,
         priceId,
       }
     );
@@ -61,15 +63,11 @@ const Register = () => {
       {formStep === 1 && (
         <div>
           <RegisterForm onSubmit={onSubmit} />
-          <button onClick={prevFormStep}>Go Back</button>
-          <button onClick={nextFormStep}>Next Step</button>
         </div>
       )}
       {formStep === 2 && (
         <div>
           <Checkout />
-          <button onClick={prevFormStep}>Go Back</button>
-          <button onClick={nextFormStep}>Next Step</button>
         </div>
       )}
     </div>
