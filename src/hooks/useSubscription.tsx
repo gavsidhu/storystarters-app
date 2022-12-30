@@ -26,6 +26,10 @@ const useSubscription = () => {
       setLoading(true);
       const docRef = doc(db, 'users', user?.uid as string);
       getData(docRef).then(async (data) => {
+        if (!data.data()?.subscription.planId) {
+          setSubscription(null);
+          setLoading(false);
+        }
         const plan = data.data()?.subscription.planId;
         if (data.data() === undefined) {
           setSubscription(null);
