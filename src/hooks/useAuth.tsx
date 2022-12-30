@@ -14,14 +14,16 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import { auth, db } from '@/lib/firebaseClient';
 
+import { url } from '@/constant/url';
+import { AlertContext } from '@/context/AlertState';
+
 interface IAuth {
   user: User | null;
   registerWithEmail: (
     email: string,
     password: string,
     firstName: string,
-    lastName: string,
-    stripeId: string
+    lastName: string
   ) => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -50,6 +52,8 @@ interface AuthProviderProps {
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const alertContext = useContext(AlertContext);
+  const { addAlert } = alertContext;
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -80,11 +84,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     email: string,
     password: string,
     firstName: string,
-    lastName: string,
-    stripeId: string
+    lastName: string
   ) => {
     setLoading(true);
-
+    let stripeId;
     await createUserWithEmailAndPassword(auth, email, password)
       .then(async (result) => {
         //Comment to get rid of eslint warning
@@ -92,12 +95,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         await updateProfile(result.user, {
           displayName: `${firstName} ${lastName}`,
         });
+
+        const createCustomer = await axios.post(
+          `${url}/api/payment/create-customer`,
+          {
+            email: email,
+            name: firstName + ' ' + lastName,
+          }
+        );
+        stripeId = createCustomer.data.customer.id;
         await setDoc(doc(db, 'users', result.user.uid), {
           uid: result.user.uid,
           firstName,
           lastName,
           email,
-          stripeId,
+          stripeId: createCustomer.data.customer.id,
         });
         // const response = await axios.post(
         //   `${url}/api/crm/add-person`,
@@ -123,11 +135,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         axios.defaults.headers.common['Authorization'] = idToken;
       })
       .catch((error: FirebaseError) => {
-        throw new Error(error.message);
-        //   if (error.message === "Firebase: Error (auth/email-already-in-use).")
-        //     addAlert("Email already in use", "error", 3000);
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            addAlert(`Email address already in use.`, 'error', 3000);
+            break;
+          case 'auth/invalid-email':
+            addAlert(`Email address is invalid.`, 'error', 3000);
+            break;
+          case 'auth/operation-not-allowed':
+            addAlert(`Error during sign up.`, 'error', 3000);
+            break;
+          case 'auth/weak-password':
+            addAlert(
+              'Password is not strong enough. Add additional characters including special characters and numbers.',
+              'error',
+              3000
+            );
+            break;
+          default:
+            break;
+        }
+        if (error.message === 'Firebase: Error (auth/email-already-in-use).')
+          addAlert('Email already in use', 'error', 3000);
       })
       .finally(() => setLoading(false));
+    return stripeId;
   };
 
   const signInWithEmail = async (email: string, password: string) => {
@@ -140,9 +172,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         router.push('/');
       })
       .catch((error: FirebaseError) => {
-        throw new Error(error.message);
-        // if (error.message === "Firebase: Error (auth/wrong-password).")
-        //   addAlert("Invalid email or password", "error", 3000);
+        // throw new Error(error.message);
+        if (error.message === 'Firebase: Error (auth/wrong-password).')
+          addAlert('Invalid email or password', 'error', 3000);
       })
       .finally(() => setLoading(false));
   };

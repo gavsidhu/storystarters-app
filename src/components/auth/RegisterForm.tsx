@@ -3,6 +3,7 @@ import React from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 
 import Button from '@/components/buttons/Button';
+import Alert from '@/components/layout/Alert';
 import PrimaryLink from '@/components/links/PrimaryLink';
 
 interface Props {
@@ -21,6 +22,7 @@ const RegisterForm = ({ onSubmit }: Props) => {
 
   return (
     <>
+      <Alert />
       <div className='flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8'>
         <div className='sm:mx-auto sm:w-full sm:max-w-md'>
           <Image

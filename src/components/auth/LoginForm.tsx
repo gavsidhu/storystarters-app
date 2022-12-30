@@ -1,9 +1,9 @@
-import React from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 
 import useAuth from '@/hooks/useAuth';
 
 import Button from '@/components/buttons/Button';
+import Alert from '@/components/layout/Alert';
 import UnderlineLink from '@/components/links/UnderlineLink';
 
 const LoginForm = () => {
@@ -20,6 +20,7 @@ const LoginForm = () => {
   };
   return (
     <>
+      <Alert />
       <div>
         <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
           <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
