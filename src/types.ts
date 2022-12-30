@@ -31,3 +31,9 @@ export type DocumentModel = {
     };
   };
 };
+
+export type Alert = {
+  id: string;
+  msg: string;
+  type: string;
+};
