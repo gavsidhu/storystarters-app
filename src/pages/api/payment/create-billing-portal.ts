@@ -1,5 +1,8 @@
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
+
+import { admin } from '@/lib/firebaseAdmin';
 
 import { url } from '@/constant/url';
 // This is your test secret API key.
@@ -11,7 +14,22 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { customerId } = req.body;
+  const { customerId, uid } = req.body;
+  const idToken = req.headers.authorization;
+
+  if (!idToken) {
+    return res.status(401).send('Unauthorized 1');
+  }
+  let user: DecodedIdToken;
+  try {
+    user = await admin.auth().verifyIdToken(idToken as string);
+  } catch (error) {
+    return res.status(401).send('Unauthorized 2');
+  }
+
+  if (user.uid != uid) {
+    return res.status(401).send('Unauthorized 3');
+  }
 
   try {
     const session = await stripe.billingPortal.sessions.create({
