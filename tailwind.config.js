@@ -42,7 +42,7 @@ module.exports = {
             backgroundPosition: '-700px 0',
           },
           '100%': {
-            backgroundPosition: '700px 0',
+            backgroundPosition: '1400px 0',
           },
         },
       },
