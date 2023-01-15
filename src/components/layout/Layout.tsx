@@ -18,6 +18,7 @@ import {
 
 import { db } from '@/lib/firebaseClient';
 import useAuth from '@/hooks/useAuth';
+import useProjects from '@/hooks/useProjects';
 import useSubscription from '@/hooks/useSubscription';
 
 import Button from '@/components/buttons/Button';
@@ -36,7 +37,11 @@ const navigation = [
     icon: HiSquare2Stack,
   },
   { name: 'Account', href: '/account', icon: HiUsers },
-  { name: 'Help', href: '/help', icon: HiQuestionMarkCircle },
+  {
+    name: 'Help',
+    href: 'https://uplevel-hq-llc.outseta.com/support/kb',
+    icon: HiQuestionMarkCircle,
+  },
 ];
 
 type Props = {
@@ -46,7 +51,8 @@ type Props = {
 
 export default function Layout({ children, title }: Props) {
   const router = useRouter();
-  const { user, logout, loading } = useAuth();
+  const { user, logout, loading, initialLoading } = useAuth();
+  const { projectLoading } = useProjects();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { subscription, subLoading } = useSubscription();
   const handlePlanSelect = async (e: MouseEvent<HTMLButtonElement>) => {
@@ -68,7 +74,7 @@ export default function Layout({ children, title }: Props) {
       window.location.href = createSession.data.url;
     }
   };
-  if (loading || subLoading) {
+  if (loading || subLoading || initialLoading || projectLoading) {
     return <Skeleton className='h-screen w-screen' />;
   }
   if (!user) {
@@ -153,41 +159,68 @@ export default function Layout({ children, title }: Props) {
                       />
                     </div>
                     <nav className='mt-5 space-y-1 px-2'>
-                      {navigation.map((item) => (
-                        <Link
-                          key={item.name}
-                          href={item.href}
-                          className={
-                            typeof window != 'undefined' &&
-                            window.location.pathname === item.href
-                              ? 'flex items-center rounded-md bg-primary-500 px-2 py-2 text-sm font-medium text-white'
-                              : 'flex items-center rounded-md px-2 py-2 text-sm font-medium text-black hover:bg-gray-100'
-                          }
-                        >
-                          <item.icon
+                      {navigation.map((item) => {
+                        if (item.name === 'Help') {
+                          return (
+                            <a
+                              key={item.name}
+                              href={item.href}
+                              className={
+                                typeof window != 'undefined' &&
+                                window.location.pathname === item.href
+                                  ? 'flex items-center rounded-md bg-primary-500 px-2 py-2 text-sm font-medium text-white'
+                                  : 'flex items-center rounded-md px-2 py-2 text-sm font-medium text-black hover:bg-gray-100'
+                              }
+                            >
+                              <item.icon
+                                className={
+                                  typeof window != 'undefined' &&
+                                  window.location.pathname === item.href
+                                    ? 'mr-4 h-6 w-6 flex-shrink-0 text-white'
+                                    : 'mr-4 h-6 w-6 flex-shrink-0 text-black'
+                                }
+                                aria-hidden='true'
+                              />
+                              {item.name}
+                            </a>
+                          );
+                        }
+                        return (
+                          <Link
+                            key={item.name}
+                            href={item.href}
                             className={
                               typeof window != 'undefined' &&
                               window.location.pathname === item.href
-                                ? 'mr-4 h-6 w-6 flex-shrink-0 text-white'
-                                : 'mr-4 h-6 w-6 flex-shrink-0 text-black'
+                                ? 'flex items-center rounded-md bg-primary-500 px-2 py-2 text-sm font-medium text-white'
+                                : 'flex items-center rounded-md px-2 py-2 text-sm font-medium text-black hover:bg-gray-100'
                             }
-                            aria-hidden='true'
-                          />
-                          {item.name}
-                        </Link>
-                      ))}
+                          >
+                            <item.icon
+                              className={
+                                typeof window != 'undefined' &&
+                                window.location.pathname === item.href
+                                  ? 'mr-4 h-6 w-6 flex-shrink-0 text-white'
+                                  : 'mr-4 h-6 w-6 flex-shrink-0 text-black'
+                              }
+                              aria-hidden='true'
+                            />
+                            {item.name}
+                          </Link>
+                        );
+                      })}
                     </nav>
                   </div>
                   <div className='flex flex-shrink-0 border-t border-gray-200 p-4'>
                     <div className='flex items-center'>
                       <div>
-                        <Image
+                        {/* <Image
                           className='inline-block h-10 w-10 rounded-full'
                           src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
                           alt='Profile'
                           width={40}
                           height={40}
-                        />
+                        /> */}
                       </div>
                       <div className='ml-3'>
                         <p className='text-base font-medium text-gray-700'>
@@ -228,41 +261,68 @@ export default function Layout({ children, title }: Props) {
                 />
               </div>
               <nav className='mt-5 flex-1 space-y-1 bg-white px-2'>
-                {navigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={
-                      typeof window != 'undefined' &&
-                      window.location.pathname === item.href
-                        ? 'flex items-center rounded-md bg-primary-500 px-2 py-2 text-sm font-medium text-white'
-                        : 'flex items-center rounded-md px-2 py-2 text-sm font-medium text-black hover:bg-gray-100'
-                    }
-                  >
-                    <item.icon
+                {navigation.map((item) => {
+                  if (item.name === 'Help') {
+                    return (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        className={
+                          typeof window != 'undefined' &&
+                          window.location.pathname === item.href
+                            ? 'flex items-center rounded-md bg-primary-500 px-2 py-2 text-sm font-medium text-white'
+                            : 'flex items-center rounded-md px-2 py-2 text-sm font-medium text-black hover:bg-gray-100'
+                        }
+                      >
+                        <item.icon
+                          className={
+                            typeof window != 'undefined' &&
+                            window.location.pathname === item.href
+                              ? 'mr-4 h-6 w-6 flex-shrink-0 text-white'
+                              : 'mr-4 h-6 w-6 flex-shrink-0 text-black'
+                          }
+                          aria-hidden='true'
+                        />
+                        {item.name}
+                      </a>
+                    );
+                  }
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
                       className={
                         typeof window != 'undefined' &&
                         window.location.pathname === item.href
-                          ? 'mr-3 h-6 w-6 flex-shrink-0 text-white'
-                          : 'mr-3 h-6 w-6 flex-shrink-0 text-black'
+                          ? 'flex items-center rounded-md bg-primary-500 px-2 py-2 text-sm font-medium text-white'
+                          : 'flex items-center rounded-md px-2 py-2 text-sm font-medium text-black hover:bg-gray-100'
                       }
-                      aria-hidden='true'
-                    />
-                    {item.name}
-                  </Link>
-                ))}
+                    >
+                      <item.icon
+                        className={
+                          typeof window != 'undefined' &&
+                          window.location.pathname === item.href
+                            ? 'mr-3 h-6 w-6 flex-shrink-0 text-white'
+                            : 'mr-3 h-6 w-6 flex-shrink-0 text-black'
+                        }
+                        aria-hidden='true'
+                      />
+                      {item.name}
+                    </Link>
+                  );
+                })}
               </nav>
             </div>
             <div className='flex flex-shrink-0 border-t border-gray-200 p-4'>
               <div className='flex items-center'>
                 <div>
-                  <Image
+                  {/* <Image
                     className='inline-block h-9 w-9 rounded-full'
                     src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
                     alt='Profile'
                     width={36}
                     height={36}
-                  />
+                  /> */}
                 </div>
                 <div className='ml-3'>
                   <p className='text-sm font-medium text-gray-700'>
