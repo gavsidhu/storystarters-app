@@ -29,6 +29,7 @@ interface IAuth {
   logout: () => Promise<void>;
   error: string | null;
   loading: boolean;
+  initialLoading: boolean;
 }
 
 const AuthContext = createContext<IAuth>({
@@ -44,6 +45,7 @@ const AuthContext = createContext<IAuth>({
   },
   error: null,
   loading: false,
+  initialLoading: true,
 });
 
 interface AuthProviderProps {
@@ -71,7 +73,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           // Not logged in...
           setUser(null);
           setLoading(true);
-          // router.push("/login");
+          router.push('/login');
         }
 
         setInitialLoading(false);
@@ -200,6 +202,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       signInWithEmail,
       error,
       loading,
+      initialLoading,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [user, error, loading]
