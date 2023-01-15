@@ -60,7 +60,7 @@ const TextEditor = ({ content, docId }: Props) => {
     //   const docRef = doc(db, `projects/${id}/documents/${docId}`);
     //   setDoc(docRef, { wordCount: editor.storage.characterCount.words(), node: { data: { content: html } } }, { merge: true });
     // },
-    async onBlur() {
+    async onFocus() {
       const projectRef = doc(db, `projects/${id}`);
       const colRef = collection(db, `projects/${id}/documents`);
 
@@ -91,7 +91,7 @@ const TextEditor = ({ content, docId }: Props) => {
       }
     },
   });
-  const [debouncedEditor] = useDebounce(editor?.getHTML(), 7000);
+  const [debouncedEditor] = useDebounce(editor?.getHTML(), 500);
   useEffect(() => {
     if (debouncedEditor) {
       const html = editor?.getHTML();
@@ -133,6 +133,18 @@ const TextEditor = ({ content, docId }: Props) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const exitingFunction = async (event: any) => {
+      event.preventDefault();
+      event.returnValue = '';
+      return '';
+    };
+
+    window.addEventListener('beforeunload', exitingFunction);
+    return () => window.removeEventListener('beforeunload', exitingFunction);
+  }, []);
 
   if (projectLoading) {
     return <p>Loading</p>;

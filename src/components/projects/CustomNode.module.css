@@ -23,6 +23,9 @@
   grid-template-columns: auto auto 1fr auto;
   height: 32px;
   padding-inline-end: 8px;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  white-space: nowrap;
 }
 
 .root.isSelected {
@@ -51,10 +54,6 @@
 
 .expandIconWrapper.isOpen {
   transform: rotate(90deg);
-}
-
-.labelGridItem {
-  padding-inline-start: 8px;
 }
 
 .inputWrapper {

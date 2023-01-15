@@ -107,11 +107,34 @@ const ProjectTree = ({
   }, []);
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
-
   return (
     <ThemeProvider theme={theme}>
-      <div className='flex flex-row'>
-        <h2 className='flex-1'>{project?.projectName}</h2>
+      <div className='flex flex-col space-y-3'>
+        <h2 className='flex-1 text-xl'>{project?.projectName}</h2>
+        {project?.wordCountGoal > 0 ? (
+          <div>
+            <div className='mb-1 flex justify-between'>
+              <span className='text-base font-medium text-blue-700'>
+                {project?.wordCount}/{parseInt(project?.wordCountGoal)} words
+              </span>
+              <span className='text-sm font-medium text-blue-700'>{`${Math.round(
+                (project?.wordCount / parseInt(project?.wordCountGoal)) * 100
+              )}%`}</span>
+            </div>
+            <div className='h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700'>
+              <div
+                className='h-2.5 max-w-[100%] rounded-full bg-blue-600'
+                style={{
+                  width: `${
+                    (project?.wordCount / parseInt(project?.wordCountGoal)) *
+                    100
+                  }%`,
+                }}
+              ></div>
+            </div>
+          </div>
+        ) : null}
+
         <PlusDropdown>
           <Menu.Item>
             {({ active }) => (

@@ -1,8 +1,9 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { addDoc, collection } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import React, { Fragment, useState } from 'react';
 
 import { db } from '@/lib/firebaseClient';
+import axiosApiInstance from '@/lib/updateIdToken';
 import useAuth from '@/hooks/useAuth';
 
 import Button from '@/components/buttons/Button';
@@ -10,39 +11,49 @@ import Label from '@/components/inputs/Label';
 import TextInput from '@/components/inputs/TextInput';
 import Skeleton from '@/components/Skeleton';
 
+import { url } from '@/constant/url';
+
 type Props = {
   isOpen: boolean;
-  handleShowModal: (value: boolean) => void;
+  handleShowModal: (value: boolean, event?: React.MouseEvent) => void;
+  wordCountGoal: string | number;
+  projectName: string;
+  projectDescription: string;
+  id: string | number;
 };
-export default function MyModal({ isOpen, handleShowModal }: Props) {
+export default function ProjectSettingsModal({
+  isOpen,
+  handleShowModal,
+  wordCountGoal,
+  projectName,
+  projectDescription,
+  id,
+}: Props) {
   const { user } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
-    projectName: '',
-    projectDescription: '',
-    wordCountGoal: 0,
+    projectName: projectName,
+    projectDescription: projectDescription,
+    wordCountGoal: wordCountGoal,
   });
 
   function closeModal() {
-    setFormData({ projectName: '', projectDescription: '', wordCountGoal: 0 });
     handleShowModal(false);
   }
 
-  const addProject = async () => {
-    if (!formData?.projectName) {
-      return;
-    }
+  const editProject = async () => {
     setLoading(true);
     const { projectName, projectDescription, wordCountGoal } = formData;
-    const colRef = collection(db, 'projects');
-    await addDoc(colRef, {
-      uid: user?.uid,
-      projectName,
-      projectDescription,
-      wordCountGoal,
-      dateCreated: new Date().toISOString(),
-      lastOpened: Date.now(),
-    });
+    const docRef = doc(db, `projects/${id}`);
+    await setDoc(
+      docRef,
+      {
+        projectName,
+        projectDescription,
+        wordCountGoal,
+      },
+      { merge: true }
+    );
 
     closeModal();
     setLoading(false);
@@ -50,6 +61,13 @@ export default function MyModal({ isOpen, handleShowModal }: Props) {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const onDelete = async () => {
+    await axiosApiInstance.post(`${url}/api/projects/delete-project`, {
+      uid: user?.uid,
+      projectId: id,
+    });
   };
   if (loading) {
     return <Skeleton />;
@@ -123,15 +141,22 @@ export default function MyModal({ isOpen, handleShowModal }: Props) {
                       />
                     </div>
                   </div>
-
-                  <div className='mt-4 space-x-3'>
-                    <Button onClick={addProject}>Create Project</Button>
+                  <div className='mt-4 flex items-center justify-between'>
+                    <div className='space-x-3'>
+                      <Button onClick={editProject}>Edit project</Button>
+                      <Button
+                        onClick={closeModal}
+                        variant='outline'
+                        className='border border-black text-black hover:bg-black hover:text-white active:bg-primary-100 disabled:bg-primary-100'
+                      >
+                        Cancel
+                      </Button>
+                    </div>
                     <Button
-                      onClick={closeModal}
-                      variant='outline'
-                      className='border border-red-500 text-red-500 hover:bg-red-50 active:bg-primary-100 disabled:bg-primary-100'
+                      onClick={onDelete}
+                      className='border-none bg-red-500 text-white hover:bg-red-600'
                     >
-                      Cancel
+                      Delete project
                     </Button>
                   </div>
                 </Dialog.Panel>
