@@ -1,6 +1,9 @@
+import { doc, setDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import React from 'react';
 import { HiArrowRight } from 'react-icons/hi2';
+
+import { db } from '@/lib/firebaseClient';
 
 import { findDaysDifferent } from '@/utils/findDaysDifferent';
 
@@ -10,6 +13,10 @@ type Props = {
   projects: Project[];
 };
 const ProjectsTable = ({ projects }: Props) => {
+  const getProject = async (id: string) => {
+    const docRef = doc(db, `projects/${id}`);
+    await setDoc(docRef, { lastOpened: Date.now() }, { merge: true });
+  };
   return (
     <>
       <div className='flex flex-row justify-between border-b-2'>
@@ -32,6 +39,7 @@ const ProjectsTable = ({ projects }: Props) => {
                 <Link
                   href={`/projects/${project.id}`}
                   className='block hover:bg-gray-50'
+                  onClick={() => getProject(project.id)}
                 >
                   <div className='flex items-center justify-between px-4 py-4 sm:px-6'>
                     <div className='flex items-center justify-between'>
