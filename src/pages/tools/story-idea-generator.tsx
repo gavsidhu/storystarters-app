@@ -1,8 +1,16 @@
-import { Select } from 'flowbite-react';
-import { HiOutlineArrowPath } from 'react-icons/hi2';
+import { Card, Select } from 'flowbite-react';
+import { useContext, useState } from 'react';
+import { HiOutlineArrowPath, HiOutlineClipboard } from 'react-icons/hi2';
+
+import axiosApiInstance from '@/lib/updateIdToken';
+import useAuth from '@/hooks/useAuth';
 
 import Button from '@/components/buttons/Button';
+import Alert from '@/components/layout/Alert';
 import Layout from '@/components/layout/Layout';
+
+import { url } from '@/constant/url';
+import { AlertContext } from '@/context/AlertState';
 
 const genres = [
   {
@@ -28,9 +36,25 @@ const genres = [
 ];
 
 const StoryIdeaGenerator = () => {
-  //const [loading, setLoading] = useState(false)
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [storyIdea, setStoryIdea] = useState('');
+  const alertContext = useContext(AlertContext);
+
+  const generateIdea = async () => {
+    setLoading(true);
+    const res = await axiosApiInstance.post(
+      `${url}/api/generate/story-idea-generator`,
+      {
+        uid: user?.uid,
+      }
+    );
+    setStoryIdea(res.data.choices[0].text);
+    setLoading(false);
+  };
   return (
     <Layout title='Story Idea Generator'>
+      <Alert />
       <div className='mx-auto lg:max-w-7xl '>
         <div className='mt-4 py-6'>
           <div className='my-3'>
@@ -46,12 +70,35 @@ const StoryIdeaGenerator = () => {
                 );
               })}
             </Select>
-            <Button>
+            <Button onClick={generateIdea} isLoading={loading}>
               Generate{' '}
               <span>
                 <HiOutlineArrowPath className=' ml-2 h-4 w-4' />
               </span>
             </Button>
+          </div>
+          <div className='mt-6'>
+            {storyIdea ? (
+              <Card>
+                <div className='flex flex-row items-center justify-between'>
+                  {storyIdea ? <p className='flex-grow'>{storyIdea}</p> : null}
+                  <div className='px-1 '>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(storyIdea);
+                        alertContext.addAlert(
+                          'Copied to clipboard',
+                          'info',
+                          3000
+                        );
+                      }}
+                    >
+                      <HiOutlineClipboard className='h-5  w-5 hover:shadow-sm' />
+                    </button>
+                  </div>
+                </div>
+              </Card>
+            ) : null}
           </div>
         </div>
       </div>
