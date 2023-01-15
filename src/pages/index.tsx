@@ -15,6 +15,9 @@ import Seo from '@/components/Seo';
 import Skeleton from '@/components/Skeleton';
 import ToolCard from '@/components/tools/ToolCard';
 
+import popularResources from '@/constant/popularResources';
+import popularTools from '@/constant/popularTools';
+
 /**
  * SVGR Support
  * Caveat: No React Props Type.
@@ -26,48 +29,6 @@ import ToolCard from '@/components/tools/ToolCard';
 // !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
 // Before you begin editing, follow all comments with `STARTERCONF`,
 // to customize the default configuration.
-
-const popularTools = [
-  {
-    id: '1',
-    title: 'Story idea generator',
-    description: 'generates story ideas',
-    href: '#',
-  },
-  {
-    id: '2',
-    title: 'Character Creator',
-    description: 'Create memorable character',
-    href: '#',
-  },
-  {
-    id: '3',
-    title: 'Scene builder',
-    description: 'builds scenses',
-    href: '#',
-  },
-];
-
-const popularResources = [
-  {
-    id: '1',
-    title: 'Prompt library',
-    description: 'Hundreds of writing prompts',
-    href: '#',
-  },
-  {
-    id: '2',
-    title: "Hero's journey template",
-    description: "Template of hero's journey story structure",
-    href: '#',
-  },
-  {
-    id: '3',
-    title: 'Three act structure template',
-    description: 'Template of the three act story structure',
-    href: '#',
-  },
-];
 
 export default function HomePage() {
   const { user } = useAuth();
@@ -87,7 +48,11 @@ export default function HomePage() {
       <Seo />
       <div className='mx-auto lg:max-w-7xl '>
         <div className='mt-4 py-6'>
-          {!projects ? <EmptyState /> : <ProjectsTable projects={projects} />}
+          {!projects || projects.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <ProjectsTable projects={projects} />
+          )}
         </div>
         <div>
           <div className='flex flex-row justify-between border-b-2'>
