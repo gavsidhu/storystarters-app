@@ -39,17 +39,17 @@ export default async function handler(
       const uid = req.body.uid;
 
       if (!idToken) {
-        return res.status(401).send('Unauthorized');
+        return res.status(401).send('Unauthorized 1');
       }
       let user: DecodedIdToken;
       try {
         user = await admin.auth().verifyIdToken(idToken as string);
       } catch (error) {
-        return res.status(401).send('Unauthorized');
+        return res.status(401).send('Unauthorized 2');
       }
 
       if (user.uid != uid) {
-        return res.status(401).send('Unauthorized');
+        return res.status(401).send('Unauthorized 3');
       }
 
       const docSnap = (await getDoc(doc(db, 'users', uid))).data();
@@ -71,7 +71,7 @@ export default async function handler(
       }
 
       if (!isSubscribed) {
-        return res.status(401).send('Unauthorized');
+        return res.status(401).send('Unauthorized 4');
       }
 
       const currentTokens = docSnap.subscription.tokens;
@@ -82,7 +82,7 @@ export default async function handler(
       }
       const response = await openai.createCompletion({
         model: 'davinci:ft-uplevel-hq-llc-2022-10-23-21-09-05',
-        prompt: `Say hello`,
+        prompt: `${text}\n~~~`,
         temperature: 0.7,
         max_tokens: 500,
         top_p: 1,
