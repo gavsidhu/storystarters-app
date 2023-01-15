@@ -11,11 +11,13 @@ import {
   query,
   setDoc,
 } from 'firebase/firestore';
+import { Spinner } from 'flowbite-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { Fragment, useEffect, useState } from 'react';
 import {
+  HiArrowLeft,
   HiCheck,
   HiChevronDoubleRight,
   HiPencil,
@@ -108,7 +110,7 @@ const Project = () => {
       node: {
         parent: 0,
         droppable: false,
-        text: 'New File',
+        text: 'Untitled File',
         data: {
           fileType: 'document',
         },
@@ -126,7 +128,7 @@ const Project = () => {
       node: {
         parent: 0,
         droppable: true,
-        text: 'added Folder',
+        text: 'Untitled Folder',
         data: {
           fileType: 'folder',
         },
@@ -253,10 +255,10 @@ const Project = () => {
         <div className='hidden lg:flex lg:flex-shrink-0'>
           <div className='flex w-72 flex-col'>
             {/* Sidebar component, swap this element with another sidebar if you like */}
-            <div className='flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-gray-100'>
-              <div className='flex flex-1 flex-col overflow-y-auto pt-5 pb-4'>
-                <div className='flex flex-shrink-0 items-center px-4'>
-                  <Link href='/'>
+            <div className='text flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-gray-100'>
+              <div className='flex flex-1 flex-col overflow-y-auto overflow-x-hidden pt-5 pb-4'>
+                <div className='flex flex-shrink-0 items-center justify-between px-4'>
+                  {/* <Link href='/'>
                     <Image
                       className='h-8 w-auto'
                       src='/svg/logo-icon.svg'
@@ -264,6 +266,12 @@ const Project = () => {
                       width={32}
                       height={32}
                     />
+                  </Link> */}
+                  <Link href='/projects'>
+                    <div className='flex flex-row items-center space-x-2'>
+                      <HiArrowLeft className='h-3 w-3' />
+                      <p>Projects</p>
+                    </div>
                   </Link>
                 </div>
                 <nav className='mt-5 flex-1' aria-label='Sidebar'>
@@ -324,7 +332,7 @@ const Project = () => {
                       ) : null}
                     </div>
                   ) : (
-                    <div className='flex flex-row space-x-2'>
+                    <div className='flex w-1/3 flex-row space-x-2'>
                       <input
                         type='text'
                         name='text'
@@ -366,7 +374,7 @@ const Project = () => {
 
                 <div className='absolute inset-0 mt-12 py-6 px-4 sm:px-6 lg:px-8'>
                   <div className='mx-auto h-full lg:max-w-5xl'>
-                    {loading ? <p>loading</p> : activeEditor}
+                    {loading ? <Spinner /> : activeEditor}
                   </div>
                 </div>
               </div>
