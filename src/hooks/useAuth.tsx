@@ -157,8 +157,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           default:
             break;
         }
-        if (error.message === 'Firebase: Error (auth/email-already-in-use).')
-          addAlert('Email already in use', 'error', 3000);
       })
       .finally(() => setLoading(false));
     return stripeId;
