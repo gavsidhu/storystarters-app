@@ -12,6 +12,7 @@ import Skeleton from '@/components/Skeleton';
 const Projects = () => {
   const { projects, projectLoading } = useProjects();
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   if (projectLoading) {
     return <Skeleton />;
@@ -20,6 +21,12 @@ const Projects = () => {
   const handleShowModal = (value: boolean) => {
     setShowModal(value);
   };
+  const handleSetLoading = (value: boolean) => {
+    setLoading(value);
+  };
+  if (loading) {
+    return <Skeleton className='h-screen w-screen' />;
+  }
   return (
     <Layout title='Projects'>
       <div className='mx-auto lg:max-w-7xl '>
@@ -48,6 +55,7 @@ const Projects = () => {
                       wordCountGoal={project.wordCountGoal}
                       wordCount={project.wordCount}
                       dateCreated={new Date(project.dateCreated).toDateString()}
+                      setLoading={handleSetLoading}
                     />
                   );
                 })}
