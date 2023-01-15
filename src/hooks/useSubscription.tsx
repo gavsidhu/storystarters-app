@@ -16,9 +16,14 @@ const getData = async (docRef: DocumentReference<DocumentData>) => {
   return data;
 };
 
+type Sub = {
+  plan: string;
+  status: string;
+};
+
 const useSubscription = () => {
   const { user } = useAuth();
-  const [subscription, setSubscription] = useState<object | null>(null);
+  const [subscription, setSubscription] = useState<Sub | null>(null);
   const [subLoading, setLoading] = useState(true);
 
   useEffect(() => {
