@@ -25,20 +25,27 @@ const useSubscription = () => {
   const { user } = useAuth();
   const [subscription, setSubscription] = useState<Sub | null>(null);
   const [subLoading, setLoading] = useState(true);
+  //const router = useRouter()
 
   useEffect(() => {
     if (user) {
       setLoading(true);
       const docRef = doc(db, 'users', user?.uid as string);
       getData(docRef).then(async (data) => {
+        if (!data.data()?.subscription) {
+          // router.push('/login')
+          return;
+        }
         if (!data.data()?.subscription.planId) {
           setSubscription(null);
           setLoading(false);
+          return;
         }
         const plan = data.data()?.subscription.planId;
         if (data.data() === undefined) {
           setSubscription(null);
           setLoading(false);
+          return;
         }
         if (
           plan === plans.tier1 ||

@@ -10,8 +10,9 @@ interface Props {
   onSubmit: (data: FieldValues) => {
     //function that submits data to firebase auth and creates user
   };
+  loading: boolean;
 }
-const RegisterForm = ({ onSubmit }: Props) => {
+const RegisterForm = ({ onSubmit, loading }: Props) => {
   //Form validation
   const {
     register,
@@ -205,6 +206,7 @@ const RegisterForm = ({ onSubmit }: Props) => {
                   type='submit'
                   variant='primary'
                   className='flex w-full justify-center'
+                  isLoading={loading}
                 >
                   Register
                 </Button>

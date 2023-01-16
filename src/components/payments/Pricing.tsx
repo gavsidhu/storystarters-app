@@ -5,6 +5,8 @@ import useRegisterFlow from '@/hooks/useRegisterFlow';
 
 import Button from '@/components/buttons/Button';
 
+import { plans } from '@/constant/plans';
+
 const tiers: {
   name: string;
   href: string;
@@ -17,14 +19,14 @@ const tiers: {
     href: '#',
     priceMonthly: 9,
     description: 'Quis suspendisse ut fermentum neque vivamus non tellus.',
-    priceId: 'price_1LTgqCDvnEqvQtxzF2wMxeoc',
+    priceId: plans.tier1,
   },
   {
     name: 'Essential',
     href: '#',
     priceMonthly: 29,
     description: 'Quis eleifend a tincidunt pellentesque. A tempor in sed.',
-    priceId: 'price_1LTgqCDvnEqvQtxzF2wMxeoc',
+    priceId: plans.tier2,
   },
   {
     name: 'Premium',
@@ -32,7 +34,7 @@ const tiers: {
     priceMonthly: 59,
     description:
       'Orci volutpat ut sed sed neque, dui eget. Quis tristique non.',
-    priceId: 'price_1LTgqCDvnEqvQtxzF2wMxeoc',
+    priceId: plans.tier3,
   },
 ];
 const features: {

@@ -5,7 +5,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 
 import { admin } from '@/lib/firebaseAdmin';
-import { handleTokens } from '@/lib/stripeHelpers';
+import { insertPaymentRecord } from '@/lib/stripeHelpers';
+
+import { plans } from '@/constant/plans';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15',
@@ -32,115 +34,252 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const db = admin.firestore();
 
   // Handle the event
-  switch (event.type) {
-    case 'checkout.session.completed': {
-      const session = event.data.object;
-      // Then define and call a function to handle the event checkout.session.completed
-      break;
-    }
-
-    case 'customer.subscription.created': {
-      const subscription = event.data.object as Stripe.Subscription;
-      // Then define and call a function to handle the event customer.subscription.created
-      break;
-    }
-    case 'customer.subscription.deleted': {
-      const subscription = event.data.object;
-      // Then define and call a function to handle the event customer.subscription.deleted
-      break;
-    }
-
-    case 'customer.subscription.trial_will_end': {
-      const subscription = event.data.object;
-      // Then define and call a function to handle the event customer.subscription.trial_will_end
-      break;
-    }
-
-    case 'customer.subscription.updated': {
-      const subscription = event.data.object;
-      // Then define and call a function to handle the event customer.subscription.updated
-      break;
-    }
-
-    case 'invoice.paid': {
-      const invoice = event.data.object;
-      // Then define and call a function to handle the event invoice.paid
-      break;
-    }
-
-    case 'invoice.payment_failed': {
-      const invoice = event.data.object;
-      // Then define and call a function to handle the event invoice.payment_failed
-      break;
-    }
-
-    case 'invoice.payment_succeeded': {
-      interface Subscription extends Stripe.Subscription {
-        plan?: Stripe.Plan;
+  try {
+    switch (event.type) {
+      case 'checkout.session.completed': {
+        const checkoutSession = event.data.object as Stripe.Checkout.Session;
+        const paymentIntentId = checkoutSession.payment_intent as string;
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          paymentIntentId
+        );
+        await insertPaymentRecord(paymentIntent, checkoutSession);
+        break;
       }
-      const invoice = event.data.object as Stripe.Invoice;
-      // Then define and call a function to handle the event invoice.payment_succeeded
-      const customerId = invoice.customer;
-      const billing_reason = invoice.billing_reason;
-      const subscription = (await stripe.subscriptions.retrieve(
-        invoice.subscription as string
-      )) as Subscription;
-      const planId = (subscription.plan as Stripe.Plan).id;
-      //get customer uid from firestore
-      const customerSnap = await db
-        .collection('users')
-        .where('stripeId', '==', customerId)
-        .get();
-      const uid = customerSnap.docs[0].id;
 
-      if (customerSnap.size !== 1) {
-        throw new Error('User not found!');
+      case 'customer.subscription.created': {
+        const subscription = event.data.object as Stripe.Subscription;
+        // Then define and call a function to handle the event customer.subscription.created
+        break;
       }
-      handleTokens(
-        billing_reason,
-        subscription,
-        planId,
-        uid,
-        customerId as string
-      );
-      break;
-    }
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object;
+        // Then define and call a function to handle the event customer.subscription.deleted
+        break;
+      }
 
-    case 'payment_intent.canceled': {
-      const paymentIntent = event.data.object;
-      // Then define and call a function to handle the event payment_intent.canceled
-      break;
-    }
+      case 'customer.subscription.trial_will_end': {
+        const subscription = event.data.object;
+        // Then define and call a function to handle the event customer.subscription.trial_will_end
+        break;
+      }
 
-    case 'payment_intent.created': {
-      const paymentIntent = event.data.object;
-      // Then define and call a function to handle the event payment_intent.created
-      break;
-    }
+      case 'customer.subscription.updated': {
+        const subscription = event.data.object;
+        // Then define and call a function to handle the event customer.subscription.updated
+        break;
+      }
 
-    case 'payment_intent.payment_failed': {
-      const paymentIntent = event.data.object;
-      // Then define and call a function to handle the event payment_intent.payment_failed
-      break;
-    }
+      case 'invoice.paid': {
+        const invoice = event.data.object;
+        // Then define and call a function to handle the event invoice.paid
+        break;
+      }
 
-    case 'payment_intent.processing': {
-      const paymentIntent = event.data.object;
-      // Then define and call a function to handle the event payment_intent.processing
-      break;
-    }
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object;
+        // Then define and call a function to handle the event invoice.payment_failed
+        break;
+      }
 
-    case 'payment_intent.succeeded': {
-      const paymentIntent = event.data.object;
-      // Then define and call a function to handle the event payment_intent.succeeded
-      break;
-    }
+      case 'invoice.payment_succeeded': {
+        interface Subscription extends Stripe.Subscription {
+          plan?: Stripe.Plan;
+        }
+        const invoice = event.data.object as Stripe.Invoice;
+        console.log('invoice', invoice);
+        // Then define and call a function to handle the event invoice.payment_succeeded
+        const customerId = invoice.customer;
+        const billing_reason = invoice.billing_reason;
+        const subscription = (await stripe.subscriptions.retrieve(
+          invoice.subscription as string
+        )) as Subscription;
+        const planId = (subscription.plan as Stripe.Plan).id;
+        //get customer uid from firestore
+        const customerSnap = await db
+          .collection('users')
+          .where('stripeId', '==', customerId)
+          .get();
+        const uid = customerSnap.docs[0].id;
 
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
+        if (customerSnap.size !== 1) {
+          throw new Error('User not found!');
+        }
+        const tier1Price = plans.tier1;
+        const tier2Price = plans.tier2;
+        const tier3Price = plans.tier3;
+        switch (billing_reason) {
+          case 'subscription_create': {
+            if (planId === tier1Price) {
+              await admin
+                .firestore()
+                .collection('users')
+                .doc(uid)
+                .update({
+                  subscription: {
+                    status: subscription.status,
+                    planId: subscription.plan?.id,
+                    upgradedToTier2: false,
+                    upgradedToTier3: false,
+                    tokens: 20000,
+                  },
+                });
+            }
+            if (planId === tier2Price) {
+              await admin
+                .firestore()
+                .collection('users')
+                .doc(uid)
+                .update({
+                  subscription: {
+                    status: subscription.status,
+                    planId: subscription.plan?.id,
+                    upgradedToTier2: true,
+                    upgradedToTier3: false,
+                    tokens: 100000,
+                  },
+                });
+            }
+            if (planId === tier3Price) {
+              await admin
+                .firestore()
+                .collection('users')
+                .doc(uid)
+                .update({
+                  subscription: {
+                    status: subscription.status,
+                    planId: subscription.plan?.id,
+                    upgradedToTier2: true,
+                    upgradedToTier3: true,
+                    tokens: 200000,
+                  },
+                });
+            }
+            break;
+          }
+          case 'subscription_update': {
+            const userData = customerSnap.docs[0].data();
+            const upgradedToTier2 = userData.subscription.upgradedToTier2;
+            const upgradedToTier3 = userData.subscription.upgradedToTier3;
+            if (planId === tier2Price && !upgradedToTier2 && !upgradedToTier3) {
+              await customerSnap.docs[0].ref.update({
+                subscription: { tokens: 100000 },
+              });
+              await customerSnap.docs[0].ref.update({
+                upgradedToTier2: true,
+                upgradedToTier3: false,
+              });
+            }
+
+            if (planId === tier3Price && !upgradedToTier3) {
+              await customerSnap.docs[0].ref.update({
+                subscription: { tokens: 200000 },
+              });
+              await customerSnap.docs[0].ref.update({
+                upgradedToTier2: true,
+                upgradedToTier3: true,
+              });
+            }
+            break;
+          }
+          case 'subscription_cycle': {
+            if (planId === tier1Price) {
+              await admin
+                .firestore()
+                .collection('users')
+                .doc(uid)
+                .update({
+                  subscription: {
+                    status: subscription.status,
+                    planId: subscription.plan?.id,
+                    upgradedToTier2: false,
+                    upgradedToTier3: false,
+                    tokens: 20000,
+                  },
+                });
+            }
+
+            if (planId === tier2Price) {
+              await admin
+                .firestore()
+                .collection('users')
+                .doc(uid)
+                .update({
+                  subscription: {
+                    status: subscription.status,
+                    planId: subscription.plan?.id,
+                    upgradedToTier2: true,
+                    upgradedToTier3: false,
+                    tokens: 100000,
+                  },
+                });
+            }
+
+            if (planId === tier3Price) {
+              await admin
+                .firestore()
+                .collection('users')
+                .doc(uid)
+                .update({
+                  subscription: {
+                    status: subscription.status,
+                    planId: subscription.plan?.id,
+                    upgradedToTier2: true,
+                    upgradedToTier3: true,
+                    tokens: 200000,
+                  },
+                });
+            }
+
+            break;
+          }
+          default: {
+            break;
+          }
+        }
+        break;
+      }
+
+      case 'payment_intent.canceled': {
+        const paymentIntent = event.data.object;
+        // Then define and call a function to handle the event payment_intent.canceled
+        break;
+      }
+
+      case 'payment_intent.created': {
+        const paymentIntent = event.data.object;
+        // Then define and call a function to handle the event payment_intent.created
+        break;
+      }
+
+      case 'payment_intent.payment_failed': {
+        const paymentIntent = event.data.object;
+        // Then define and call a function to handle the event payment_intent.payment_failed
+        break;
+      }
+
+      case 'payment_intent.processing': {
+        const paymentIntent = event.data.object;
+        // Then define and call a function to handle the event payment_intent.processing
+        break;
+      }
+
+      case 'payment_intent.succeeded': {
+        const paymentIntent = event.data.object;
+        // Then define and call a function to handle the event payment_intent.succeeded
+        break;
+      }
+
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+    res.send({ recieved: true });
+  } catch (error) {
+    res.status(500).json({
+      code: 'webhook_failed',
+      error,
+    });
   }
-  res.send({ recieved: true });
 };
 
 export default handler;
