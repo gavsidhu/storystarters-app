@@ -15,51 +15,56 @@ const tiers: {
   priceId: string;
 }[] = [
   {
-    name: 'Basic',
+    name: 'Starter',
     href: '#',
-    priceMonthly: 9,
-    description: 'Quis suspendisse ut fermentum neque vivamus non tellus.',
+    priceMonthly: 15,
+    description: 'Ideal for aspiring writers or those just starting out.',
     priceId: plans.tier1,
   },
   {
-    name: 'Essential',
+    name: 'Standard',
     href: '#',
-    priceMonthly: 29,
-    description: 'Quis eleifend a tincidunt pellentesque. A tempor in sed.',
+    priceMonthly: 60,
+    description:
+      'Perfect for writers looking to take their writing to the next level.',
     priceId: plans.tier2,
   },
   {
-    name: 'Premium',
+    name: 'Professional',
     href: '#',
-    priceMonthly: 59,
+    priceMonthly: 100,
     description:
-      'Orci volutpat ut sed sed neque, dui eget. Quis tristique non.',
+      'Tailored for professional writers who are looking to elevate their craft.',
     priceId: plans.tier3,
   },
 ];
 const features: {
   name: string;
   tiers: {
-    Basic?: boolean | string | undefined;
-    Essential?: boolean | string | undefined;
-    Premium?: boolean | string | undefined;
+    Starter?: boolean | string | undefined;
+    Standard?: boolean | string | undefined;
+    Professional?: boolean | string | undefined;
   };
 }[] = [
   {
-    name: 'Molestie lobortis massa.',
-    tiers: { Basic: true, Essential: true, Premium: true },
+    name: 'AI generated words.',
+    tiers: {
+      Starter: '20,000 words per month',
+      Standard: '100,000 words per month',
+      Professional: '200,000 words per month',
+    },
   },
   {
-    name: 'Urna purus felis.',
-    tiers: { Basic: true, Essential: true, Premium: true },
+    name: 'Plot idea generator',
+    tiers: { Starter: true, Standard: true, Professional: true },
   },
   {
-    name: 'Tellus pulvinar sit dictum.',
-    tiers: { Essential: true, Premium: true },
+    name: 'Character generator',
+    tiers: { Starter: true, Standard: true, Professional: true },
   },
   {
-    name: 'Convallis.',
-    tiers: { Essential: 'Up to 20 users', Premium: 'Up to 50 users' },
+    name: 'Story outline genertator',
+    tiers: { Starter: true, Standard: true, Professional: true },
   },
 ];
 
@@ -97,13 +102,13 @@ export default function Pricing({ handlePlanSelect }: Props) {
                     /mo
                   </span>
                 </p>
-                <p className='mt-4 text-sm text-gray-500'>{tier.description}</p>
+                {/* <p className='mt-4 text-sm text-gray-500'>{tier.description}</p> */}
                 <Button
                   id={tier.priceId}
                   className='mt-6 block w-full rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
                   onClick={onClick}
                 >
-                  Buy {tier.name}
+                  Try {tier.name} for free
                 </Button>
               </div>
               <table className='w-full'>
@@ -173,7 +178,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                   className='block w-full rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
                   onClick={onClick}
                 >
-                  Buy {tier.name}
+                  Try {tier.name} for free
                 </Button>
               </div>
             </section>
@@ -231,7 +236,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                         className='5 absolute bottom-0 block w-full flex-grow rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
                         onClick={onClick}
                       >
-                        Buy {tier.name}
+                        Try {tier.name} for free
                       </Button>
                     </div>
                   </td>
@@ -304,7 +309,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                       className='block w-full rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
                       onClick={onClick}
                     >
-                      Buy {tier.name}
+                      Try {tier.name} for free
                     </Button>
                   </td>
                 ))}
