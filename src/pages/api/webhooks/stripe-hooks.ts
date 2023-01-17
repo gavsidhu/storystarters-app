@@ -64,8 +64,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       case 'customer.subscription.updated': {
-        const subscription = event.data.object;
+        interface Subscription extends Stripe.Subscription {
+          plan?: Stripe.Plan;
+        }
+        const subscription = event.data.object as Stripe.Subscription;
         // Then define and call a function to handle the event customer.subscription.updated
+        const customerId = subscription.customer;
+        const customerSnap = await db
+          .collection('users')
+          .where('stripeId', '==', customerId)
+          .get();
+        const uid = customerSnap.docs[0].id;
+        if (customerSnap.docs[0].data().subscription) {
+          return;
+        }
+        if (subscription.trial_end === null) {
+          return;
+        }
+        if (
+          customerSnap.docs[0].data().subscription.status < subscription.status
+        ) {
+          await admin
+            .firestore()
+            .collection('users')
+            .doc(uid)
+            .update({
+              subscription: {
+                status: subscription.status,
+              },
+            });
+        }
         break;
       }
 
