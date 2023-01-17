@@ -66,6 +66,10 @@ const features: {
     name: 'Story outline genertator',
     tiers: { Starter: true, Standard: true, Professional: true },
   },
+  {
+    name: '7-day money-back guarantee',
+    tiers: { Starter: true, Standard: true, Professional: true },
+  },
 ];
 
 function classNames(...classes: string[]) {

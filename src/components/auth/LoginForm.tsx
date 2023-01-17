@@ -1,4 +1,8 @@
+import { AxiosError } from 'axios';
+import { FirebaseError } from 'firebase/app';
+import { useContext } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
+import { FaGoogle } from 'react-icons/fa';
 
 import useAuth from '@/hooks/useAuth';
 
@@ -6,8 +10,13 @@ import Button from '@/components/buttons/Button';
 import Alert from '@/components/layout/Alert';
 import UnderlineLink from '@/components/links/UnderlineLink';
 
+import authErrors from '@/constant/authErrors';
+import { AlertContext } from '@/context/AlertState';
+
 const LoginForm = () => {
-  const { signInWithEmail } = useAuth();
+  const { signInWithEmail, signInWithGoogle, loading } = useAuth();
+  const alertContext = useContext(AlertContext);
+  // const [loading, setLoading] = useState(false)
   //Form validation
   const {
     register,
@@ -16,7 +25,37 @@ const LoginForm = () => {
   } = useForm();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-console
   const onSubmit = async (data: FieldValues) => {
-    await signInWithEmail(data.email, data.password);
+    // setLoading(true)
+    try {
+      await signInWithEmail(data.email, data.password);
+    } catch (error) {
+      // setLoading(false)
+      if (error instanceof AxiosError) {
+        // setLoading(false)
+        alertContext.addAlert(error.code as string, 'error', 3000);
+      }
+      if (error instanceof FirebaseError) {
+        // setLoading(false)
+        alertContext.addAlert(authErrors[error.code] as string, 'error', 5000);
+      }
+    }
+  };
+
+  const googleSubmit = async () => {
+    // setLoading(true)
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      // setLoading(false)
+      if (error instanceof AxiosError) {
+        // setLoading(false)
+        alertContext.addAlert(error.code as string, 'error', 3000);
+      }
+      if (error instanceof FirebaseError) {
+        // setLoading(false)
+        alertContext.addAlert(error.message as string, 'error', 3000);
+      }
+    }
   };
   return (
     <>
@@ -102,6 +141,31 @@ const LoginForm = () => {
                 </Button>
               </div>
             </form>
+            <div className='mt-6'>
+              <div className='relative'>
+                <div className='absolute inset-0 flex items-center'>
+                  <div className='w-full border-t border-gray-300' />
+                </div>
+                <div className='relative flex justify-center text-sm'>
+                  <span className='bg-white px-2 text-gray-500'>Or</span>
+                </div>
+              </div>
+              <Button
+                type='submit'
+                variant='outline'
+                className='mt-6 flex w-full justify-center border-gray-300 text-gray-600'
+                isLoading={loading}
+                onClick={googleSubmit}
+              >
+                {loading ? (
+                  <span className='h-5'></span>
+                ) : (
+                  <FaGoogle className='mr-4 h-5 w-5' />
+                )}
+                <span className='sr-only'>Login with Google</span>
+                {loading ? null : 'Login with Google'}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

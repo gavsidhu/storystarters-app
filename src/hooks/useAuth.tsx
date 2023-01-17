@@ -1,21 +1,27 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { FirebaseError } from 'firebase/app';
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
   updateProfile,
   User,
+  UserCredential,
 } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import { auth, db } from '@/lib/firebaseClient';
 
+import authErrors from '@/constant/authErrors';
 import { url } from '@/constant/url';
 import { AlertContext } from '@/context/AlertState';
+
+const provider = new GoogleAuthProvider();
 
 interface IAuth {
   user: User | null;
@@ -27,6 +33,8 @@ interface IAuth {
   ) => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  registerWithGoogle: () => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
   error: string | null;
   loading: boolean;
   initialLoading: boolean;
@@ -42,6 +50,12 @@ const AuthContext = createContext<IAuth>({
   },
   logout: async () => {
     //logout user
+  },
+  registerWithGoogle: async () => {
+    //sign in with google popup
+  },
+  signInWithGoogle: async () => {
+    //sign in with google popup
   },
   error: null,
   loading: false,
@@ -59,7 +73,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const [error, setError] = useState(null);
+  const [error] = useState(null);
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(
@@ -72,7 +86,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } else {
           // Not logged in...
           setUser(null);
-          setLoading(true);
           router.push('/login');
         }
 
@@ -92,8 +105,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     let stripeId;
     await createUserWithEmailAndPassword(auth, email, password)
       .then(async (result) => {
-        //Comment to get rid of eslint warning
-        //const decodedToken = await auth.currentUser?.getIdToken();
         await updateProfile(result.user, {
           displayName: `${firstName} ${lastName}`,
         });
@@ -113,50 +124,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           email,
           stripeId: createCustomer.data.customer.id,
         });
-        // const response = await axios.post(
-        //   `${url}/api/crm/add-person`,
-        //   {
-        //     uid: result.user.uid,
-        //     idToken: decodedToken,
-        //     name: firstName + " " + lastName,
-        //     personData: {
-        //       Email: email,
-        //       FirstName: firstName,
-        //       LastName: lastName,
-        //     },
-        //   },
-        //   {
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //     },
-        //   }
-        // );
-        // console.log(response.data);
+        try {
+          await axios.post(
+            `${url}/api/crm/add-person`,
+            {
+              uid: result.user.uid,
+              name: firstName + ' ' + lastName,
+              personData: {
+                Email: email,
+                FirstName: firstName,
+                LastName: lastName,
+              },
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            return;
+          }
+          return;
+        }
+
         setUser(result.user);
         const idToken = await result.user.getIdToken();
         axios.defaults.headers.common['Authorization'] = idToken;
       })
       .catch((error: FirebaseError) => {
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            addAlert(`Email address already in use.`, 'error', 3000);
-            break;
-          case 'auth/invalid-email':
-            addAlert(`Email address is invalid.`, 'error', 3000);
-            break;
-          case 'auth/operation-not-allowed':
-            addAlert(`Error during sign up.`, 'error', 3000);
-            break;
-          case 'auth/weak-password':
-            addAlert(
-              'Password is not strong enough. Add additional characters including special characters and numbers.',
-              'error',
-              3000
-            );
-            break;
-          default:
-            break;
-        }
+        addAlert(authErrors[error.code] as string, 'error', 5000);
       })
       .finally(() => setLoading(false));
     return stripeId;
@@ -173,8 +171,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       })
       .catch((error: FirebaseError) => {
         // throw new Error(error.message);
-        if (error.message === 'Firebase: Error (auth/wrong-password).')
-          addAlert('Invalid email or password', 'error', 3000);
+        addAlert(authErrors[error.code] as string, 'error', 5000);
       })
       .finally(() => setLoading(false));
   };
@@ -187,17 +184,169 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         delete axios.defaults.headers.common['Authorization'];
         setUser(null);
       })
-      .catch((error) => setError(error.message))
+      .catch((error) =>
+        addAlert(authErrors[error.code] as string, 'error', 5000)
+      )
       .finally(() => {
         setLoading(false);
       });
   };
+
+  const registerWithGoogle = async (
+    fromLogin?: boolean,
+    result?: UserCredential
+  ) => {
+    setLoading(true);
+    if (fromLogin && fromLogin === true && result) {
+      const createCustomer = await axios.post(
+        `${url}/api/payment/create-customer`,
+        {
+          email: result.user.email,
+          name: result.user.displayName,
+        }
+      );
+      const docRef = doc(db, `users/${result.user.uid}`);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.data() != undefined) {
+        return;
+      }
+      await setDoc(doc(db, 'users', result.user.uid), {
+        uid: result.user.uid,
+        name: result.user.displayName,
+        email: result.user.email,
+        stripeId: createCustomer.data.customer.id,
+      });
+      try {
+        await axios.post(
+          `${url}/api/crm/add-person`,
+          {
+            uid: result.user.uid,
+            personData: {
+              Email: result.user.email,
+              Name: result.user.displayName,
+            },
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          return;
+        }
+        return;
+      }
+    }
+    let stripeId: null | string = null;
+    await signInWithPopup(auth, provider)
+      .then(async (result) => {
+        const docRef = doc(db, `users/${result.user.uid}`);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.data() != undefined) {
+          router.push('/');
+          return;
+        }
+        if (
+          result.user.metadata.creationTime !=
+          result.user.metadata.lastSignInTime
+        ) {
+          addAlert('Account already registered', 'error', 3000);
+          router.push('/');
+          return;
+        }
+        if (
+          result.user.metadata.creationTime ===
+          result.user.metadata.lastSignInTime
+        ) {
+          const createCustomer = await axios.post(
+            `${url}/api/payment/create-customer`,
+            {
+              email: result.user.email,
+              name: result.user.displayName,
+            }
+          );
+          stripeId = createCustomer.data.customer.id;
+          await setDoc(doc(db, 'users', result.user.uid), {
+            uid: result.user.uid,
+            name: result.user.displayName,
+            email: result.user.email,
+            stripeId: createCustomer.data.customer.id,
+          });
+          try {
+            await axios.post(
+              `${url}/api/crm/add-person`,
+              {
+                uid: result.user.uid,
+                personData: {
+                  Email: result.user.email,
+                  Name: result.user.displayName,
+                },
+              },
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+          } catch (error) {
+            if (error instanceof AxiosError) {
+              return;
+            }
+            return;
+          }
+        }
+        setUser(result.user);
+        const idToken = await result.user.getIdToken();
+        axios.defaults.headers.common['Authorization'] = idToken;
+      })
+      .catch((error) => {
+        if (error instanceof FirebaseError) {
+          addAlert(authErrors[error.code] as string, 'error', 5000);
+        }
+        return;
+      })
+      .finally(() => setLoading(false));
+    if (stripeId != null) {
+      return stripeId;
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    await signInWithPopup(auth, provider)
+      .then(async (result) => {
+        if (
+          result.user.metadata.creationTime ===
+          result.user.metadata.lastSignInTime
+        ) {
+          await registerWithGoogle(true, result);
+          router.push('/');
+          return;
+        }
+        setUser(result.user);
+        const idToken = await result.user.getIdToken();
+        axios.defaults.headers.common['Authorization'] = idToken;
+        router.push('/');
+      })
+      .catch((error) => {
+        if (error instanceof FirebaseError) {
+          setLoading(false);
+          addAlert(authErrors[error.code] as string, 'error', 5000);
+        }
+      })
+      .finally(() => setLoading(false));
+  };
+
   const memoedValue = useMemo(
     () => ({
       user,
       logout,
       registerWithEmail,
       signInWithEmail,
+      registerWithGoogle,
+      signInWithGoogle,
       error,
       loading,
       initialLoading,

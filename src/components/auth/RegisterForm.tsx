@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import React from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
+import { FaGoogle } from 'react-icons/fa';
 
 import Button from '@/components/buttons/Button';
 import Alert from '@/components/layout/Alert';
@@ -11,8 +12,9 @@ interface Props {
     //function that submits data to firebase auth and creates user
   };
   loading: boolean;
+  googleSubmit: () => void;
 }
-const RegisterForm = ({ onSubmit, loading }: Props) => {
+const RegisterForm = ({ onSubmit, loading, googleSubmit }: Props) => {
   //Form validation
   const {
     register,
@@ -212,6 +214,31 @@ const RegisterForm = ({ onSubmit, loading }: Props) => {
                 </Button>
               </div>
             </form>
+            <div className='mt-6'>
+              <div className='relative'>
+                <div className='absolute inset-0 flex items-center'>
+                  <div className='w-full border-t border-gray-300' />
+                </div>
+                <div className='relative flex justify-center text-sm'>
+                  <span className='bg-white px-2 text-gray-500'>Or</span>
+                </div>
+              </div>
+              <Button
+                type='submit'
+                variant='outline'
+                className='mt-6 flex w-full justify-center border-gray-300 text-gray-600'
+                isLoading={loading}
+                onClick={googleSubmit}
+              >
+                {loading ? (
+                  <span className='h-5'></span>
+                ) : (
+                  <FaGoogle className='mr-4 h-5 w-5' />
+                )}
+                <span className='sr-only'>Register with Google</span>
+                {!loading ? 'Register with Google' : null}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

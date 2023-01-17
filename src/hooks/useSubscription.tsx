@@ -34,6 +34,7 @@ const useSubscription = () => {
       getData(docRef).then(async (data) => {
         if (!data.data()?.subscription) {
           // router.push('/login')
+          setLoading(false);
           return;
         }
         if (!data.data()?.subscription.planId) {
@@ -60,6 +61,7 @@ const useSubscription = () => {
         }
       });
     } else {
+      setLoading(false);
       return;
     }
   }, [user]);
