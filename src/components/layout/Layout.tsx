@@ -124,7 +124,7 @@ export default function Layout({ children, title }: Props) {
                 leaveFrom='translate-x-0'
                 leaveTo='-translate-x-full'
               >
-                <Dialog.Panel className='relative flex w-full max-w-xs flex-1 flex-col bg-white'>
+                <Dialog.Panel className='relative flex w-full max-w-xs flex-1 flex-col bg-[#f4f4f4]'>
                   <Transition.Child
                     as={Fragment}
                     enter='ease-in-out duration-300'
@@ -250,7 +250,7 @@ export default function Layout({ children, title }: Props) {
         {/* Static sidebar for desktop */}
         <div className='hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col'>
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className='flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-white'>
+          <div className='flex min-h-0 flex-1 flex-col bg-[#f4f4f4]'>
             <div className='flex flex-1 flex-col overflow-y-auto pt-5 pb-4'>
               <div className='flex flex-shrink-0 items-center px-4'>
                 <Image
@@ -260,7 +260,7 @@ export default function Layout({ children, title }: Props) {
                   height={32}
                 />
               </div>
-              <nav className='mt-5 flex-1 space-y-1 bg-white px-2'>
+              <nav className='mt-5 flex-1 space-y-1 bg-[#f4f4f4] px-2'>
                 {navigation.map((item) => {
                   if (item.name === 'Help') {
                     return (
@@ -271,7 +271,7 @@ export default function Layout({ children, title }: Props) {
                           typeof window != 'undefined' &&
                           window.location.pathname === item.href
                             ? 'flex items-center rounded-md bg-primary-500 px-2 py-2 text-sm font-medium text-white'
-                            : 'flex items-center rounded-md px-2 py-2 text-sm font-medium text-black hover:bg-gray-100'
+                            : 'flex items-center rounded-md px-2 py-2 text-sm font-medium text-black hover:bg-gray-200'
                         }
                       >
                         <item.icon
@@ -295,7 +295,7 @@ export default function Layout({ children, title }: Props) {
                         typeof window != 'undefined' &&
                         window.location.pathname === item.href
                           ? 'flex items-center rounded-md bg-primary-500 px-2 py-2 text-sm font-medium text-white'
-                          : 'flex items-center rounded-md px-2 py-2 text-sm font-medium text-black hover:bg-gray-100'
+                          : 'flex items-center rounded-md px-2 py-2 text-sm font-medium text-black hover:bg-gray-200'
                       }
                     >
                       <item.icon
@@ -313,7 +313,7 @@ export default function Layout({ children, title }: Props) {
                 })}
               </nav>
             </div>
-            <div className='flex flex-shrink-0 border-t border-gray-200 p-4'>
+            <div className='flex flex-shrink-0 border-t border-gray-400 p-4'>
               <div className='flex items-center'>
                 <div>
                   {/* <Image

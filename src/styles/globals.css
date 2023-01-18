@@ -5,16 +5,16 @@
 :root {
   /* #region  /**=========== Primary Color =========== */
   /* !STARTERCONF Customize these variable, copy and paste from /styles/colors.css for list of colors */
-  --tw-color-primary-50: 240 249 255;
-  --tw-color-primary-100: 224 242 254;
-  --tw-color-primary-200: 186 230 253;
-  --tw-color-primary-300: 125 211 252;
-  --tw-color-primary-400: 56 189 248;
-  --tw-color-primary-500: 14 165 233;
-  --tw-color-primary-600: 2 132 199;
-  --tw-color-primary-700: 3 105 161;
-  --tw-color-primary-800: 7 89 133;
-  --tw-color-primary-900: 12 74 110;
+  --tw-color-primary-50: 226 248 249;
+  --tw-color-primary-100: 204 243 245;
+  --tw-color-primary-200: 183 238 241;
+  --tw-color-primary-300: 161 233 237;
+  --tw-color-primary-400: 140 228 233;
+  --tw-color-primary-500: 97 218 225;
+  --tw-color-primary-600: 76 213 221;
+  --tw-color-primary-700: 54 208 217;
+  --tw-color-primary-800: 39 197 206;
+  --tw-color-primary-900: 35 177 185;
   --color-primary-50: rgb(var(--tw-color-primary-50)); /* #f0f9ff */
   --color-primary-100: rgb(var(--tw-color-primary-100)); /* #e0f2fe */
   --color-primary-200: rgb(var(--tw-color-primary-200)); /* #bae6fd */
@@ -26,6 +26,8 @@
   --color-primary-800: rgb(var(--tw-color-primary-800)); /* #075985 */
   --color-primary-900: rgb(var(--tw-color-primary-900)); /* #0c4a6e */
   /* #endregion  /**======== Primary Color =========== */
+
+  /* #region  /**=========== Primary Color =========== */
 }
 
 @layer base {
@@ -89,6 +91,12 @@
   /* Class to adjust with sticky footer */
   .min-h-main {
     @apply min-h-[calc(100vh-56px)];
+  }
+}
+
+@layer components {
+  .cardShadow {
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 6px 24px;
   }
 }
 

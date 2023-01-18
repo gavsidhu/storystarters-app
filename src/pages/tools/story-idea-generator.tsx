@@ -61,7 +61,7 @@ const StoryIdeaGenerator = () => {
             <p>Select a genre and hit generate to get a story idea.</p>
           </div>
           <div className='flex flex-row items-center space-x-4'>
-            <Select>
+            <Select className='bg-transparent'>
               {genres.map((genre) => {
                 return (
                   <option key={genre.id} id={genre.id}>

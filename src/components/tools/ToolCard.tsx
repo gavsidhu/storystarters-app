@@ -8,7 +8,11 @@ interface Props extends ComponentProps<'div'> {
 }
 const ToolCard = ({ href, title, description, ...props }: Props) => {
   return (
-    <Card href={href} {...props} className='p-5 shadow-none hover:shadow-lg'>
+    <Card
+      href={href}
+      {...props}
+      className='cardShadow rounded-2xl border-none p-5 hover:bg-primary-200'
+    >
       <div>
         <h3 className='font-body text-xl font-extrabold tracking-tight text-gray-900'>
           {title}
