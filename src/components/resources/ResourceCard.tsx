@@ -1,5 +1,6 @@
 import { Card } from 'flowbite-react';
 import React, { ComponentProps } from 'react';
+import { HiSquare2Stack } from 'react-icons/hi2';
 
 interface Props extends ComponentProps<'div'> {
   href?: string;
@@ -11,16 +12,21 @@ const ResourceCard = ({ href, title, description, onClick }: Props) => {
   return (
     <Card
       href={href}
-      className='cardShadow rounded-2xl border-none bg-[#F48E19] p-5 text-white hover:bg-white hover:text-gray-900'
+      className='cardShadow group rounded-2xl border-none p-5 hover:bg-primary-500'
       onClick={onClick}
     >
-      <div className='h-full'>
-        <h3 className='font-body text-xl font-extrabold  tracking-tight '>
+      <div className='space-y-2'>
+        <div className='inline-flex rounded-full bg-primary-500 p-2 group-hover:bg-white'>
+          <HiSquare2Stack className='h-3 w-3 text-white group-hover:text-primary-500' />
+        </div>
+        <h3 className='font-body text-2xl font-extrabold tracking-tight text-gray-900 group-hover:text-white'>
           {title}
         </h3>
       </div>
 
-      <p className='font-body font-normal  '>{description}</p>
+      <p className='font-body font-normal text-gray-700 group-hover:text-white'>
+        {description}
+      </p>
     </Card>
   );
 };

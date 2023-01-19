@@ -9,9 +9,9 @@ import { db } from '@/lib/firebaseClient';
 import ProjectSettingsModal from '@/components/projects/ProjectSettingsModal';
 
 type Props = {
-  wordCountGoal: string | number;
-  wordCount: number | string;
-  dateCreated: string;
+  wordCountGoal: number;
+  wordCount: number;
+  dateCreated?: string;
   projectName: string;
   projectDescription: string;
   id: string | number;
@@ -20,7 +20,6 @@ type Props = {
 
 const ProjectCard = ({
   wordCountGoal,
-  dateCreated,
   projectDescription,
   projectName,
   wordCount,
@@ -51,31 +50,47 @@ const ProjectCard = ({
         id={id}
       />
       <div onClick={getProject} className='hover:cursor-pointer'>
-        <Card className='h-full shadow-none hover:shadow-lg'>
+        <Card className='cardShadow group h-full rounded-2xl border-none p-5 hover:bg-primary-500'>
           <div className='flex flex-row justify-between'>
-            <h5 className='font-body text-2xl font-extrabold tracking-tight text-gray-900'>
+            <h3 className='font-body text-2xl font-extrabold tracking-tight text-gray-900 group-hover:text-white'>
               {projectName}
-            </h5>
+            </h3>
             <button
               name='settingsButton'
               onClick={(e) => handleShowModal(true, e)}
-              className='p-1 hover:bg-gray-100'
+              className='p-1'
             >
               <span>
-                <HiCog8Tooth className='h-6 w-6' />
+                <div className='rounded-full p-2 hover:bg-black'>
+                  <HiCog8Tooth className='h-5 w-5 text-black group-hover:text-white' />
+                </div>
               </span>
             </button>
           </div>
 
-          <p className='font-body font-normal text-gray-700'>
+          <p className='font-body font-normal text-gray-700 group-hover:text-white'>
             {projectDescription}
           </p>
-          <div className='flex flex-row items-center justify-between'>
-            <p>
-              {wordCount}/{wordCountGoal} words
-            </p>
-            <p>{dateCreated}</p>
-          </div>
+          {wordCount && wordCountGoal > 0 ? (
+            <div>
+              <div className='mb-1 flex justify-between'>
+                <span className='text-sm font-medium text-gray-700 group-hover:text-white'>
+                  Progress
+                </span>
+                <span className='text-sm font-medium text-gray-700 group-hover:text-white'>{`${
+                  (wordCount / wordCountGoal) * 100
+                }%`}</span>
+              </div>
+              <div className='h-2.5 w-full rounded-full bg-primary-50'>
+                <div
+                  className='h-2.5 rounded-full bg-primary-600 group-hover:bg-black'
+                  style={{ width: `${(wordCount / wordCountGoal) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+          ) : (
+            <div></div>
+          )}
         </Card>
       </div>
     </>

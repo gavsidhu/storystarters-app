@@ -42,7 +42,7 @@ const Projects = () => {
               New Project
             </Button>
           </div>
-          <div className='grid gap-4 py-6 lg:grid-cols-3'>
+          <div className='grid gap-6 py-6 lg:grid-cols-3'>
             {!projects
               ? null
               : projects.map((project) => {
@@ -52,8 +52,8 @@ const Projects = () => {
                       id={project.id}
                       projectDescription={project.projectDescription}
                       projectName={project.projectName}
-                      wordCountGoal={project.wordCountGoal}
-                      wordCount={project.wordCount}
+                      wordCountGoal={project.wordCountGoal as number}
+                      wordCount={project.wordCount as number}
                       dateCreated={new Date(project.dateCreated).toDateString()}
                       setLoading={handleSetLoading}
                     />

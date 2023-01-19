@@ -35,11 +35,12 @@ export default function MyModal({ isOpen, handleShowModal }: Props) {
     setLoading(true);
     const { projectName, projectDescription, wordCountGoal } = formData;
     const colRef = collection(db, 'projects');
+    const newWordCountGoal = parseInt(wordCountGoal.toString());
     await addDoc(colRef, {
       uid: user?.uid,
       projectName,
       projectDescription,
-      wordCountGoal,
+      wordCountGoal: newWordCountGoal,
       dateCreated: new Date().toISOString(),
       lastOpened: Date.now(),
     });

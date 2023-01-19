@@ -114,16 +114,16 @@ const ProjectTree = ({
         {project?.wordCountGoal > 0 ? (
           <div>
             <div className='mb-1 flex justify-between'>
-              <span className='text-base font-medium text-blue-700'>
+              <span className='text-base font-medium text-black'>
                 {project?.wordCount}/{parseInt(project?.wordCountGoal)} words
               </span>
-              <span className='text-sm font-medium text-blue-700'>{`${Math.round(
+              <span className='text-sm font-medium text-black'>{`${Math.round(
                 (project?.wordCount / parseInt(project?.wordCountGoal)) * 100
               )}%`}</span>
             </div>
             <div className='h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700'>
               <div
-                className='h-2.5 max-w-[100%] rounded-full bg-blue-600'
+                className='h-2.5 max-w-[100%] rounded-full bg-primary-600'
                 style={{
                   width: `${
                     (project?.wordCount / parseInt(project?.wordCountGoal)) *

@@ -10,6 +10,7 @@ import React, { useContext, useState } from 'react';
 import { auth } from '@/lib/firebaseClient';
 import useAuth from '@/hooks/useAuth';
 
+import Button from '@/components/buttons/Button';
 import Alert from '@/components/layout/Alert';
 
 import { AlertContext } from '@/context/AlertState';
@@ -99,11 +100,17 @@ const AccountSectionCard = () => {
             </div>
             <div>
               {!nameInput ? (
-                <button onClick={editName}>Change name</button>
+                <Button variant='light' onClick={editName}>
+                  Change name
+                </Button>
               ) : (
                 <div className='flex flex-row space-x-3'>
-                  <button onClick={saveName}>Save</button>
-                  <button onClick={cancelNameChange}>Cancel</button>
+                  <Button variant='light' onClick={saveName}>
+                    Save
+                  </Button>
+                  <Button variant='light' onClick={cancelNameChange}>
+                    Cancel
+                  </Button>
                 </div>
               )}
             </div>
@@ -126,11 +133,17 @@ const AccountSectionCard = () => {
             </div>
             <div>
               {!emailInput ? (
-                <button onClick={editEmail}>Change email</button>
+                <Button variant='light' onClick={editEmail}>
+                  Change email
+                </Button>
               ) : (
                 <div className='flex flex-row space-x-3'>
-                  <button onClick={saveEmail}>Save</button>
-                  <button onClick={cancelEmailChange}>Cancel</button>
+                  <Button variant='light' onClick={saveEmail}>
+                    Save
+                  </Button>
+                  <Button variant='light' onClick={cancelEmailChange}>
+                    Cancel
+                  </Button>
                 </div>
               )}
             </div>
@@ -141,7 +154,9 @@ const AccountSectionCard = () => {
               <p>&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;</p>
             </div>
             <div>
-              <button onClick={resetPassword}>Change password</button>
+              <Button variant='light' onClick={resetPassword}>
+                Change password
+              </Button>
             </div>
           </div>
         </div>

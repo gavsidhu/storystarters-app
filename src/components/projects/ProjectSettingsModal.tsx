@@ -16,7 +16,7 @@ import { url } from '@/constant/url';
 type Props = {
   isOpen: boolean;
   handleShowModal: (value: boolean, event?: React.MouseEvent) => void;
-  wordCountGoal: string | number;
+  wordCountGoal: number;
   projectName: string;
   projectDescription: string;
   id: string | number;
@@ -44,13 +44,14 @@ export default function ProjectSettingsModal({
   const editProject = async () => {
     setLoading(true);
     const { projectName, projectDescription, wordCountGoal } = formData;
+    const newWordCountGoal = parseInt(wordCountGoal.toString());
     const docRef = doc(db, `projects/${id}`);
     await setDoc(
       docRef,
       {
         projectName,
         projectDescription,
-        wordCountGoal,
+        wordCountGoals: newWordCountGoal,
       },
       { merge: true }
     );

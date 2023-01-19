@@ -55,13 +55,13 @@ export default function HomePage() {
           )}
         </div>
         <div>
-          <div className='flex flex-row justify-between border-b-2'>
+          <div className='flex flex-row justify-between'>
             <div className='px-1 py-2'>
               <h2 className='text-2xl font-semibold'>Popular tools</h2>
             </div>
             <Link
               href='/tools'
-              className='flex flex-row items-center space-x-2 px-1 py-2'
+              className='animated-underline flex flex-row items-center space-x-2 px-1 py-2'
             >
               <p>See all tools</p>
               <HiArrowLongRight className='h-4 w-4' />
@@ -81,13 +81,13 @@ export default function HomePage() {
           </div>
         </div>
         <div>
-          <div className='flex flex-row justify-between border-b-2'>
+          <div className='flex flex-row justify-between'>
             <div className='px-1 py-2'>
               <h2 className='text-2xl font-semibold'>Popular resources</h2>
             </div>
             <Link
               href='/resources'
-              className='flex flex-row items-center space-x-2 px-1 py-2'
+              className='animated-underline flex flex-row items-center space-x-2 px-1 py-2'
             >
               <p>See all resources</p>
               <HiArrowLongRight className='h-4 w-4' />
