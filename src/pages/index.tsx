@@ -1,3 +1,4 @@
+import { User } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import * as React from 'react';
@@ -10,12 +11,13 @@ import useSubscription from '@/hooks/useSubscription';
 import EmptyState from '@/components/home/EmptyState';
 import ProjectsTable from '@/components/home/ProjectsTable';
 import Layout from '@/components/layout/Layout';
+import herosJourneyTemplate from '@/components/resources/herosJourneyTemplate';
 import ResourceCard from '@/components/resources/ResourceCard';
+import threeActTemplate from '@/components/resources/threeActTemplate';
 import Seo from '@/components/Seo';
 import Skeleton from '@/components/Skeleton';
 import ToolCard from '@/components/tools/ToolCard';
 
-import popularResources from '@/constant/popularResources';
 import popularTools from '@/constant/popularTools';
 
 /**
@@ -34,6 +36,7 @@ export default function HomePage() {
   const { user } = useAuth();
   const router = useRouter();
   const { projects, projectLoading } = useProjects();
+  const [loading, setLoading] = React.useState(false);
   useSubscription();
   if (!user) {
     router.replace('/login');
@@ -42,6 +45,41 @@ export default function HomePage() {
   if (projectLoading) {
     return <Skeleton className='h-screen w-screen' />;
   }
+  if (loading) {
+    return <Skeleton className='h-screen w-screen' />;
+  }
+
+  const popularResources = [
+    {
+      id: '1',
+      title: 'Prompt library',
+      description: 'Hundreds of writing prompts',
+      href: '/resources/prompts',
+      template: false,
+    },
+    {
+      id: '2',
+      title: "Hero's journey template",
+      description: "Template of hero's journey story structure",
+      href: '#',
+      template: true,
+      onClick: async () => {
+        setLoading(true);
+        await herosJourneyTemplate(user as User, router);
+      },
+    },
+    {
+      id: '3',
+      title: 'Three act structure template',
+      description: 'Template of the three act story structure',
+      href: '#',
+      template: true,
+      onClick: async () => {
+        setLoading(true);
+        await threeActTemplate(user as User, router);
+      },
+    },
+  ];
   return (
     <Layout title='Home'>
       {/* <Seo templateTitle='Home' /> */}
@@ -97,10 +135,12 @@ export default function HomePage() {
             {popularResources.map((resource) => {
               return (
                 <ResourceCard
+                  onClick={resource.onClick ? resource.onClick : () => false}
                   key={resource.id}
-                  href={resource.href}
+                  id={resource.id}
                   title={resource.title}
                   description={resource.description}
+                  href={resource.href}
                 />
               );
             })}
