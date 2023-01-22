@@ -1,4 +1,4 @@
-import { Fragment, MouseEvent, MouseEventHandler } from 'react';
+import { Fragment, MouseEvent, MouseEventHandler, useState } from 'react';
 import { HiCheck, HiMinus } from 'react-icons/hi2';
 
 import useRegisterFlow from '@/hooks/useRegisterFlow';
@@ -82,7 +82,9 @@ interface Props {
 
 export default function Pricing({ handlePlanSelect }: Props) {
   const { setPriceId } = useRegisterFlow();
+  const [loading, setLoading] = useState(false);
   const onClick = (e: MouseEvent<HTMLButtonElement>) => {
+    setLoading(true);
     const id = (e.target as HTMLButtonElement).id;
     setPriceId(id);
     handlePlanSelect(e);
@@ -111,6 +113,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                   id={tier.priceId}
                   className='mt-6 block w-full rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
                   onClick={onClick}
+                  isLoading={loading}
                 >
                   Try {tier.name} for free
                 </Button>
@@ -181,6 +184,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                   id={tier.priceId}
                   className='block w-full rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
                   onClick={onClick}
+                  isLoading={loading}
                 >
                   Try {tier.name} for free
                 </Button>
@@ -239,6 +243,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                         id={tier.priceId}
                         className='5 absolute bottom-0 block w-full flex-grow rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
                         onClick={onClick}
+                        isLoading={loading}
                       >
                         Try {tier.name} for free
                       </Button>
@@ -312,6 +317,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                       id={tier.priceId}
                       className='block w-full rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
                       onClick={onClick}
+                      isLoading={loading}
                     >
                       Try {tier.name} for free
                     </Button>
