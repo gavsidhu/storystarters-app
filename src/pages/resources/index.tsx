@@ -10,8 +10,6 @@ import herosJourneyTemplate from '@/components/resources/herosJourneyTemplate';
 import ResourceCard from '@/components/resources/ResourceCard';
 import threeActTemplate from '@/components/resources/threeActTemplate';
 
-import autoId from '@/utils/autoId';
-
 const Resources = () => {
   const { user } = useAuth();
   const router = useRouter();
@@ -33,9 +31,9 @@ const Resources = () => {
       description: "Template of hero's journey story structure",
       href: '#',
       template: true,
-      onClick: () => {
+      onClick: async () => {
         setLoading(true);
-        herosJourneyTemplate(user as User, router);
+        await herosJourneyTemplate(user as User, router);
         setLoading(false);
       },
     },
@@ -59,20 +57,20 @@ const Resources = () => {
       template: true,
       onClick: async () => {
         setLoading(true);
-        freytagsPyramidTemplate(user as User, router);
-        setLoading(true);
+        await freytagsPyramidTemplate(user as User, router);
+        setLoading(false);
       },
     },
-    {
-      id: '5',
-      title: 'Seven-Point structure template',
-      description: 'Template of the seven-point story structure',
-      href: '#',
-      template: true,
-      onClick: async () => {
-        autoId();
-      },
-    },
+    // {
+    //   id: '5',
+    //   title: 'Seven-Point structure template',
+    //   description: 'Template of the seven-point story structure',
+    //   href: '#',
+    //   template: true,
+    //   onClick: async () => {
+    //     autoId();
+    //   },
+    // },
   ];
   return (
     <Layout title='Resources'>
