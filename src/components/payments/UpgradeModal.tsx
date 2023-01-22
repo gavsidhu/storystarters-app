@@ -12,7 +12,6 @@ type Props = {
 export default function UpgradeModal({ isOpen, handleShowModal }: Props) {
   // const { user } = useAuth();
   // const [loading, setLoading] = useState<boolean>(false);
-  // const [open, setOpen] = useState(true)
 
   function closeModal() {
     handleShowModal(false);
@@ -20,7 +19,7 @@ export default function UpgradeModal({ isOpen, handleShowModal }: Props) {
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
-      <Dialog as='div' className='relative z-10' onClose={setOpen}>
+      <Dialog as='div' className='relative z-10' onClose={closeModal}>
         <Transition.Child
           as={Fragment}
           enter='ease-out duration-300'
