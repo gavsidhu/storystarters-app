@@ -5,21 +5,27 @@ import ToolCard from '@/components/tools/ToolCard';
 const tools = [
   {
     id: '1',
-    title: 'Story idea generator',
-    description: 'generates story ideas',
-    href: '#',
+    title: 'Plot generator',
+    description: 'Generate interesting story ideas',
+    href: 'plot-generator',
   },
   {
     id: '2',
-    title: 'Character Creator',
-    description: 'Create memorable character',
-    href: '#',
+    title: 'Character creator',
+    description: 'Create memorable characters for your story',
+    href: 'character-creator',
   },
+  // {
+  //   id: '3',
+  //   title: 'Scene builder',
+  //   description: 'builds scenses',
+  //   href: 'scene-builder',
+  // },
   {
-    id: '3',
-    title: 'Scene builder',
-    description: 'builds scenses',
-    href: '#',
+    id: '4',
+    title: 'Outline generator',
+    description: 'Turn your story idea into an organized outline',
+    href: 'outline-generator',
   },
 ];
 
@@ -36,7 +42,7 @@ const Tools = () => {
                   id={tool.id}
                   title={tool.title}
                   description={tool.description}
-                  href={tool.href}
+                  href={`tools/${tool.href}`}
                 />
               );
             })}
