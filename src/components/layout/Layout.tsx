@@ -55,6 +55,12 @@ export default function Layout({ children, title }: Props) {
   const { projectLoading } = useProjects();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { subscription, subLoading } = useSubscription();
+  // const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // const handleShowUpgradeModal = (value: boolean) => {
+  //   setShowUpgradeModal(value);
+  // };
+
   const handlePlanSelect = async (e: MouseEvent<HTMLButtonElement>) => {
     const price = (e.target as HTMLButtonElement).id;
     const userDoc = await getDoc(doc(db, 'users', user?.uid as string));
@@ -96,6 +102,7 @@ export default function Layout({ children, title }: Props) {
   return (
     <>
       <div>
+        {/* <UpgradeModal isOpen={showUpgradeModal} handleShowModal={handleShowUpgradeModal} /> */}
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
             as='div'
