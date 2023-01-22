@@ -1,6 +1,7 @@
 import { Editor, Range } from '@tiptap/react';
+import { AxiosError } from 'axios';
 import { Select, Spinner } from 'flowbite-react';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   FaAlignCenter,
   FaAlignLeft,
@@ -18,6 +19,7 @@ import useAuth from '@/hooks/useAuth';
 import Button from '@/components/buttons/Button';
 
 import { url } from '@/constant/url';
+import { AlertContext } from '@/context/AlertState';
 
 type Props = {
   editor: Editor | null;
@@ -40,6 +42,7 @@ const fonts = [
 export const TextEditorMenu = ({ editor }: Props) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
+  const alertContext = useContext(AlertContext);
 
   const fontChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     editor?.chain().focus().setFontFamily(e.target.value).run();
@@ -85,8 +88,11 @@ export const TextEditorMenu = ({ editor }: Props) => {
         }
         setLoading(false);
       } catch (error) {
-        setLoading(false);
-        throw new Error('Something went wrong');
+        if (error instanceof AxiosError) {
+          alertContext.addAlert(error.message, 'error', 5000);
+        } else {
+          alertContext.addAlert('Something went wrong', 'error', 5000);
+        }
       }
     }
   };
@@ -134,8 +140,11 @@ export const TextEditorMenu = ({ editor }: Props) => {
       }
       setLoading(false);
     } catch (error) {
-      //addAlert(error.response.data, "error", 5000);
-      setLoading(false);
+      if (error instanceof AxiosError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      } else {
+        alertContext.addAlert('Something went wrong', 'error', 5000);
+      }
     }
   };
   return (

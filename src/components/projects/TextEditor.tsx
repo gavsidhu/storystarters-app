@@ -5,6 +5,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { Content, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { FirebaseError } from 'firebase/app';
 import {
   collection,
   doc,
@@ -15,10 +16,12 @@ import {
   where,
 } from 'firebase/firestore';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import useProjects from '@/hooks/useProjects';
+
+import { AlertContext } from '@/context/AlertState';
 
 import { TextEditorMenu } from './TextEditorMenu';
 import { db } from '../../lib/firebaseClient';
@@ -31,6 +34,7 @@ const TextEditor = ({ content, docId }: Props) => {
   const router = useRouter();
   const { id } = router.query;
   const { projectLoading } = useProjects();
+  const alertContext = useContext(AlertContext);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -86,8 +90,12 @@ const TextEditor = ({ content, docId }: Props) => {
           transaction.update(projectRef, { wordCount: wordCount });
           return wordCount;
         });
-      } catch (e: unknown) {
-        throw new Error('Something went wrong');
+      } catch (error) {
+        if (error instanceof FirebaseError) {
+          alertContext.addAlert(error.message, 'error', 5000);
+        } else {
+          alertContext.addAlert('Something went wrong', 'error', 5000);
+        }
       }
     },
   });

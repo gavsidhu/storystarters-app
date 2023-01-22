@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import { Card, Textarea } from 'flowbite-react';
 import React, { useContext, useState } from 'react';
 import { HiOutlineArrowPath, HiOutlineClipboard } from 'react-icons/hi2';
@@ -21,21 +22,29 @@ const OutlineGenerator = () => {
 
   const generateOutline = async () => {
     setLoading(true);
-    const res = await axiosApiInstance.post(
-      `${url}/api/generate/outline-generator`,
-      {
-        uid: user?.uid,
-        text: textInput,
+    try {
+      const res = await axiosApiInstance.post(
+        `${url}/api/generate/outline-generator`,
+        {
+          uid: user?.uid,
+          text: textInput,
+        }
+      );
+      const resText = res.data.choices[0].text.replace(
+        /(\r\n|\r|\n){2,}/g,
+        '$1\n'
+      );
+
+      setOutline(resText.replace(/^\s+|\s+$/g, ''));
+
+      setLoading(false);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      } else {
+        alertContext.addAlert('Something went wrong', 'error', 5000);
       }
-    );
-    const resText = res.data.choices[0].text.replace(
-      /(\r\n|\r|\n){2,}/g,
-      '$1\n'
-    );
-
-    setOutline(resText.replace(/^\s+|\s+$/g, ''));
-
-    setLoading(false);
+    }
   };
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

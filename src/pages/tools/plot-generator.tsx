@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import { Card, Select } from 'flowbite-react';
 import React, { useContext, useState } from 'react';
 import { HiOutlineArrowPath, HiOutlineClipboard } from 'react-icons/hi2';
@@ -53,15 +54,23 @@ const StoryIdeaGenerator = () => {
 
   const generateIdea = async () => {
     setLoading(true);
-    const res = await axiosApiInstance.post(
-      `${url}/api/generate/story-idea-generator`,
-      {
-        uid: user?.uid,
-        genre,
+    try {
+      const res = await axiosApiInstance.post(
+        `${url}/api/generate/story-idea-generator`,
+        {
+          uid: user?.uid,
+          genre,
+        }
+      );
+      setStoryIdea(res.data.choices[0].text);
+      setLoading(false);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      } else {
+        alertContext.addAlert('Something went wrong', 'error', 5000);
       }
-    );
-    setStoryIdea(res.data.choices[0].text);
-    setLoading(false);
+    }
   };
   return (
     <Layout title='Story Idea Generator'>

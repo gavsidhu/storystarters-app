@@ -22,6 +22,7 @@ import useProjects from '@/hooks/useProjects';
 import useSubscription from '@/hooks/useSubscription';
 
 import Button from '@/components/buttons/Button';
+import UnderlineLink from '@/components/links/UnderlineLink';
 import Pricing from '@/components/payments/Pricing';
 import Skeleton from '@/components/Skeleton';
 
@@ -90,8 +91,11 @@ export default function Layout({ children, title }: Props) {
   if (subscription === null) {
     return (
       <div>
-        <div className='w-full py-6 px-4 text-right'>
-          <Button className='text-right' onClick={logout}>
+        <div className='w-full space-x-5 py-6 px-4 text-right'>
+          <UnderlineLink href='https://uplevel-hq-llc.outseta.com/support/kb'>
+            Help
+          </UnderlineLink>
+          <Button className='text-right' variant='outline' onClick={logout}>
             Logout
           </Button>
         </div>

@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import { Card, Label, Select, Textarea } from 'flowbite-react';
 import React, { useContext, useState } from 'react';
 import { HiOutlineArrowPath, HiOutlineClipboard } from 'react-icons/hi2';
@@ -89,19 +90,27 @@ const CharacterCreator = () => {
 
   const generateCharacter = async () => {
     setLoading(true);
-    const res = await axiosApiInstance.post(
-      `${url}/api/generate/character-creator`,
-      {
-        uid: user?.uid,
-        genre: formData.genre,
-        role: formData.role,
-        plot: formData.plot,
+    try {
+      const res = await axiosApiInstance.post(
+        `${url}/api/generate/character-creator`,
+        {
+          uid: user?.uid,
+          genre: formData.genre,
+          role: formData.role,
+          plot: formData.plot,
+        }
+      );
+
+      setCharacter(res.data.choices[0].text);
+
+      setLoading(false);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      } else {
+        alertContext.addAlert('Something went wrong', 'error', 5000);
       }
-    );
-
-    setCharacter(res.data.choices[0].text);
-
-    setLoading(false);
+    }
   };
 
   return (
