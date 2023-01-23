@@ -21,44 +21,41 @@ const Resources = () => {
     {
       id: '1',
       title: 'Prompt library',
-      description: 'Hundreds of writing prompts',
-      href: '#',
+      description: 'Hundreds of writing prompts for inspiration',
+      href: '/resources/prompts',
       template: false,
     },
     {
       id: '2',
       title: "Hero's journey template",
-      description: "Template of hero's journey story structure",
+      description: "Create a project using the hero's journey story structure",
       href: '#',
       template: true,
       onClick: async () => {
         setLoading(true);
         await herosJourneyTemplate(user as User, router);
-        setLoading(false);
       },
     },
     {
       id: '3',
       title: 'Three act structure template',
-      description: 'Template of the three act story structure',
+      description: 'Create a project using the three act story structure',
       href: '#',
       template: true,
       onClick: async () => {
         setLoading(true);
         await threeActTemplate(user as User, router);
-        setLoading(false);
       },
     },
     {
       id: '4',
       title: "Freytag's pyramid template",
-      description: 'Template of the three act story structure',
+      description: "Create a project using Freytag's pyramid story structure",
       href: '#',
       template: true,
       onClick: async () => {
         setLoading(true);
         await freytagsPyramidTemplate(user as User, router);
-        setLoading(false);
       },
     },
     // {
