@@ -47,7 +47,7 @@ const features: {
   };
 }[] = [
   {
-    name: 'AI generated words.',
+    name: 'AI generated words',
     tiers: {
       Starter: '20,000 words per month',
       Standard: '100,000 words per month',
@@ -55,11 +55,11 @@ const features: {
     },
   },
   {
-    name: 'Plot idea generator',
+    name: 'Plot generator',
     tiers: { Starter: true, Standard: true, Professional: true },
   },
   {
-    name: 'Character generator',
+    name: 'Character creator',
     tiers: { Starter: true, Standard: true, Professional: true },
   },
   {
