@@ -9,13 +9,14 @@ import freytagsPyramidTemplate from '@/components/resources/freytagsPyramidTempl
 import herosJourneyTemplate from '@/components/resources/herosJourneyTemplate';
 import ResourceCard from '@/components/resources/ResourceCard';
 import threeActTemplate from '@/components/resources/threeActTemplate';
+import Skeleton from '@/components/Skeleton';
 
 const Resources = () => {
   const { user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   if (loading) {
-    return <p>Loading Please wait</p>;
+    return <Skeleton className='h-screen w-screen' />;
   }
   const resources = [
     {
