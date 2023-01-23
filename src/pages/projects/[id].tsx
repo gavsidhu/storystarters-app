@@ -361,7 +361,7 @@ const Project = () => {
                     </div>
                   )}
                   {!visibleTextInput && activeDocument ? (
-                    <div className='right-0 text-red-500 hover:bg-red-500 hover:text-white'>
+                    <div className='right-0 rounded-full text-red-500 hover:bg-red-500 hover:text-white'>
                       <button
                         onClick={() => setShowDeleteModal(true)}
                         className='p-1'
