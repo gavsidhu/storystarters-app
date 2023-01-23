@@ -4,10 +4,11 @@ import {
   updateProfile,
   User,
 } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { Card } from 'flowbite-react';
 import React, { useContext, useState } from 'react';
 
-import { auth } from '@/lib/firebaseClient';
+import { auth, db } from '@/lib/firebaseClient';
 import useAuth from '@/hooks/useAuth';
 
 import Button from '@/components/buttons/Button';
@@ -38,6 +39,15 @@ const AccountSectionCard = () => {
       displayName: data.displayName,
     });
     alertContext.addAlert('Succesfully changed name', 'info', 4000);
+
+    const docRef = doc(db, `users/${user?.uid}`);
+    await setDoc(
+      docRef,
+      {
+        name: data.displayName,
+      },
+      { merge: true }
+    );
     viewNameInput(false);
   };
 
@@ -64,6 +74,16 @@ const AccountSectionCard = () => {
   const saveEmail = async () => {
     await updateEmail(auth.currentUser as User, data.email);
     alertContext.addAlert('Succesfully changed email', 'info', 4000);
+
+    const docRef = doc(db, `users/${user?.uid}`);
+    await setDoc(
+      docRef,
+      {
+        email: data.email,
+      },
+      { merge: true }
+    );
+
     viewEmailInput(false);
   };
 
@@ -92,7 +112,7 @@ const AccountSectionCard = () => {
                   type='text'
                   name='displayName'
                   id='displayName'
-                  className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                  className='block w-full rounded-md border-gray-300 shadow-sm focus:outline-none sm:text-sm'
                   value={data.displayName}
                   onChange={onChange}
                 />
@@ -125,7 +145,7 @@ const AccountSectionCard = () => {
                   type='email'
                   name='email'
                   id='email'
-                  className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                  className='block w-full rounded-md border-gray-300 shadow-sm focus:outline-none sm:text-sm'
                   value={data.email as string}
                   onChange={onChange}
                 />
