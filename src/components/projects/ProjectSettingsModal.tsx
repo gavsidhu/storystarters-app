@@ -55,7 +55,7 @@ export default function ProjectSettingsModal({
         {
           projectName,
           projectDescription,
-          wordCountGoals: newWordCountGoal,
+          wordCountGoal: newWordCountGoal,
         },
         { merge: true }
       );
