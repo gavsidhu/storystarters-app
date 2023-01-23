@@ -1,6 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
+import { AxiosError } from 'axios';
+import { FirebaseError } from 'firebase/app';
 import { doc, setDoc } from 'firebase/firestore';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 
 import { db } from '@/lib/firebaseClient';
 import axiosApiInstance from '@/lib/updateIdToken';
@@ -9,9 +11,9 @@ import useAuth from '@/hooks/useAuth';
 import Button from '@/components/buttons/Button';
 import Label from '@/components/inputs/Label';
 import TextInput from '@/components/inputs/TextInput';
-import Skeleton from '@/components/Skeleton';
 
 import { url } from '@/constant/url';
+import { AlertContext } from '@/context/AlertState';
 
 type Props = {
   isOpen: boolean;
@@ -36,6 +38,7 @@ export default function ProjectSettingsModal({
     projectDescription: projectDescription,
     wordCountGoal: wordCountGoal,
   });
+  const alertContext = useContext(AlertContext);
 
   function closeModal() {
     handleShowModal(false);
@@ -43,21 +46,31 @@ export default function ProjectSettingsModal({
 
   const editProject = async () => {
     setLoading(true);
-    const { projectName, projectDescription, wordCountGoal } = formData;
-    const newWordCountGoal = parseInt(wordCountGoal.toString());
-    const docRef = doc(db, `projects/${id}`);
-    await setDoc(
-      docRef,
-      {
-        projectName,
-        projectDescription,
-        wordCountGoals: newWordCountGoal,
-      },
-      { merge: true }
-    );
+    try {
+      const { projectName, projectDescription, wordCountGoal } = formData;
+      const newWordCountGoal = parseInt(wordCountGoal.toString());
+      const docRef = doc(db, `projects/${id}`);
+      await setDoc(
+        docRef,
+        {
+          projectName,
+          projectDescription,
+          wordCountGoals: newWordCountGoal,
+        },
+        { merge: true }
+      );
 
-    closeModal();
-    setLoading(false);
+      setLoading(false);
+      closeModal();
+    } catch (error) {
+      setLoading(false);
+      if (error instanceof AxiosError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      }
+      if (error instanceof FirebaseError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      }
+    }
   };
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -65,14 +78,27 @@ export default function ProjectSettingsModal({
   };
 
   const onDelete = async () => {
-    await axiosApiInstance.post(`${url}/api/projects/delete-project`, {
-      uid: user?.uid,
-      projectId: id,
-    });
+    try {
+      setLoading(true);
+      await axiosApiInstance.post(`${url}/api/projects/delete-project`, {
+        uid: user?.uid,
+        projectId: id,
+      });
+      setLoading(false);
+      alertContext.addAlert('Project deleted successfuly', 'info', 5000);
+    } catch (error) {
+      setLoading(false);
+      if (error instanceof AxiosError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      }
+      if (error instanceof FirebaseError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      }
+    }
   };
-  if (loading) {
-    return <Skeleton />;
-  }
+  // if (loading) {
+  //   return <Skeleton />;
+  // }
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -144,7 +170,9 @@ export default function ProjectSettingsModal({
                   </div>
                   <div className='mt-4 flex items-center justify-between'>
                     <div className='space-x-3'>
-                      <Button onClick={editProject}>Edit project</Button>
+                      <Button onClick={editProject} isLoading={loading}>
+                        Edit project
+                      </Button>
                       <Button
                         onClick={closeModal}
                         variant='outline'
@@ -156,6 +184,7 @@ export default function ProjectSettingsModal({
                     <Button
                       onClick={onDelete}
                       className='border-none bg-red-500 text-white hover:bg-red-600'
+                      isLoading={loading}
                     >
                       Delete project
                     </Button>

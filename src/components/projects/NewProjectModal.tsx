@@ -1,6 +1,8 @@
 import { Dialog, Transition } from '@headlessui/react';
+import { AxiosError } from 'axios';
+import { FirebaseError } from 'firebase/app';
 import { addDoc, collection } from 'firebase/firestore';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 
 import { db } from '@/lib/firebaseClient';
 import useAuth from '@/hooks/useAuth';
@@ -8,7 +10,8 @@ import useAuth from '@/hooks/useAuth';
 import Button from '@/components/buttons/Button';
 import Label from '@/components/inputs/Label';
 import TextInput from '@/components/inputs/TextInput';
-import Skeleton from '@/components/Skeleton';
+
+import { AlertContext } from '@/context/AlertState';
 
 type Props = {
   isOpen: boolean;
@@ -22,6 +25,7 @@ export default function MyModal({ isOpen, handleShowModal }: Props) {
     projectDescription: '',
     wordCountGoal: 0,
   });
+  const alertContext = useContext(AlertContext);
 
   function closeModal() {
     setFormData({ projectName: '', projectDescription: '', wordCountGoal: 0 });
@@ -33,28 +37,38 @@ export default function MyModal({ isOpen, handleShowModal }: Props) {
       return;
     }
     setLoading(true);
-    const { projectName, projectDescription, wordCountGoal } = formData;
-    const colRef = collection(db, 'projects');
-    const newWordCountGoal = parseInt(wordCountGoal.toString());
-    await addDoc(colRef, {
-      uid: user?.uid,
-      projectName,
-      projectDescription,
-      wordCountGoal: newWordCountGoal,
-      dateCreated: new Date().toISOString(),
-      lastOpened: Date.now(),
-    });
+    try {
+      const { projectName, projectDescription, wordCountGoal } = formData;
+      const colRef = collection(db, 'projects');
+      const newWordCountGoal = parseInt(wordCountGoal.toString());
+      await addDoc(colRef, {
+        uid: user?.uid,
+        projectName,
+        projectDescription,
+        wordCountGoal: newWordCountGoal,
+        dateCreated: new Date().toISOString(),
+        lastOpened: Date.now(),
+      });
 
-    closeModal();
-    setLoading(false);
+      setLoading(false);
+      closeModal();
+    } catch (error) {
+      setLoading(false);
+      if (error instanceof AxiosError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      }
+      if (error instanceof FirebaseError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      }
+    }
   };
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  if (loading) {
-    return <Skeleton />;
-  }
+  // if (loading) {
+  //   return <Skeleton />;
+  // }
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -126,7 +140,9 @@ export default function MyModal({ isOpen, handleShowModal }: Props) {
                   </div>
 
                   <div className='mt-4 space-x-3'>
-                    <Button onClick={addProject}>Create Project</Button>
+                    <Button onClick={addProject} isLoading={loading}>
+                      Create Project
+                    </Button>
                     <Button
                       onClick={closeModal}
                       variant='outline'
