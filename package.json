@@ -48,7 +48,7 @@
     "flowbite": "^1.5.5",
     "flowbite-react": "^0.3.7",
     "micro": "^10.0.1",
-    "next": "^13.0.6",
+    "next": "^13.1.5",
     "openai": "^3.1.0",
     "prosemirror-commands": "^1.5.0",
     "prosemirror-dropcursor": "^1.6.1",
