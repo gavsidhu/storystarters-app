@@ -1,5 +1,6 @@
 import { Editor, Range } from '@tiptap/react';
 import { AxiosError } from 'axios';
+import { FirebaseError } from 'firebase/app';
 import { Select, Spinner } from 'flowbite-react';
 import React, { useContext, useState } from 'react';
 import {
@@ -88,6 +89,10 @@ export const TextEditorMenu = ({ editor }: Props) => {
         }
         setLoading(false);
       } catch (error) {
+        setLoading(false);
+        if (error instanceof FirebaseError) {
+          alertContext.addAlert(error.message, 'error', 5000);
+        }
         if (error instanceof AxiosError) {
           alertContext.addAlert(error.message, 'error', 5000);
         } else {
@@ -140,6 +145,10 @@ export const TextEditorMenu = ({ editor }: Props) => {
       }
       setLoading(false);
     } catch (error) {
+      setLoading(false);
+      if (error instanceof FirebaseError) {
+        alertContext.addAlert(error.message, 'error', 5000);
+      }
       if (error instanceof AxiosError) {
         alertContext.addAlert(error.message, 'error', 5000);
       } else {

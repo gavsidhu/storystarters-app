@@ -63,7 +63,7 @@ const features: {
     tiers: { Starter: true, Standard: true, Professional: true },
   },
   {
-    name: 'Story outline genertator',
+    name: 'Story outline generator',
     tiers: { Starter: true, Standard: true, Professional: true },
   },
   {

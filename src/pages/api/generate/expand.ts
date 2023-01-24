@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { doc, getDoc } from 'firebase/firestore';
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 import { NextApiRequest, NextApiResponse } from 'next';
 import {
@@ -10,7 +9,6 @@ import {
 
 import { applyMiddleware, getRateLimitMiddlewares } from '@/lib/applyRateLimit';
 import { admin } from '@/lib/firebaseAdmin';
-import { db } from '@/lib/firebaseClient';
 
 import { plans } from '@/constant/plans';
 
@@ -51,19 +49,23 @@ export default async function handler(
       if (user.uid != uid) {
         return res.status(401).send('Unauthorized 3');
       }
+      const docSnap = await admin
+        .firestore()
+        .collection('users')
+        .doc(uid)
+        .get();
+      const docData = docSnap.data();
 
-      const docSnap = (await getDoc(doc(db, 'users', uid))).data();
-
-      if (!docSnap) {
+      if (!docData) {
         throw new Error('User does not exist');
       }
 
       let isSubscribed: boolean;
 
       if (
-        docSnap.subscription.planId == plans.tier1 ||
-        docSnap.subscription.planId == plans.tier2 ||
-        docSnap.subscription.planId == plans.tier3
+        docData.subscription.planId == plans.tier1 ||
+        docData.subscription.planId == plans.tier2 ||
+        docData.subscription.planId == plans.tier3
       ) {
         isSubscribed = true;
       } else {
@@ -74,7 +76,7 @@ export default async function handler(
         return res.status(401).send('Unauthorized 4');
       }
 
-      const currentTokens = docSnap.subscription.tokens;
+      const currentTokens = docData.subscription.tokens;
       const estimatedTokens = (text.length / 3.8 + 10) * 2;
 
       if (currentTokens <= estimatedTokens) {
