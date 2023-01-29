@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } else {
           // Not logged in...
           setUser(null);
-          router.push('/login');
+          // router.push('/login');
         }
 
         setInitialLoading(false);

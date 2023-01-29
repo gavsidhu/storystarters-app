@@ -1,4 +1,7 @@
+import { useRouter } from 'next/router';
 import React from 'react';
+
+import useAuth from '@/hooks/useAuth';
 
 import Layout from '@/components/layout/Layout';
 import ToolCard from '@/components/tools/ToolCard';
@@ -30,6 +33,11 @@ const tools = [
 ];
 
 const Tools = () => {
+  const { user } = useAuth();
+  const router = useRouter();
+  if (!user) {
+    router.replace('/login');
+  }
   return (
     <Layout title='Tools'>
       <div className='mx-auto lg:max-w-7xl '>

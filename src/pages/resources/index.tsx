@@ -14,6 +14,9 @@ import Skeleton from '@/components/Skeleton';
 const Resources = () => {
   const { user } = useAuth();
   const router = useRouter();
+  if (!user) {
+    router.replace('/login');
+  }
   const [loading, setLoading] = React.useState(false);
   if (loading) {
     return <Skeleton className='h-screen w-screen' />;

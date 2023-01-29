@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import { Card, Label, Select, Textarea } from 'flowbite-react';
+import { useRouter } from 'next/router';
 import React, { useContext, useState } from 'react';
 import { HiOutlineArrowPath, HiOutlineClipboard } from 'react-icons/hi2';
 
@@ -74,6 +75,10 @@ const roles = [
 
 const CharacterCreator = () => {
   const { user } = useAuth();
+  const router = useRouter();
+  if (!user) {
+    router.replace('/login');
+  }
   const [loading, setLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     genre: 'Drama',

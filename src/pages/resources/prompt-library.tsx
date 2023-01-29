@@ -1,4 +1,7 @@
+import { useRouter } from 'next/router';
 import React from 'react';
+
+import useAuth from '@/hooks/useAuth';
 
 import Layout from '@/components/layout/Layout';
 import PromptCard from '@/components/resources/PromptCard';
@@ -6,6 +9,11 @@ import PromptCard from '@/components/resources/PromptCard';
 import story_prompts from '../../constant/story_prompts.json';
 
 const PromptLibrary = () => {
+  const { user } = useAuth();
+  const router = useRouter();
+  if (!user) {
+    router.replace('/login');
+  }
   return (
     <Layout title='Prompt Library'>
       <div className='mx-auto lg:max-w-7xl '>

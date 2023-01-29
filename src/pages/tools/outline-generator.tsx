@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import { Card, Textarea } from 'flowbite-react';
+import { useRouter } from 'next/router';
 import React, { useContext, useState } from 'react';
 import { HiOutlineArrowPath, HiOutlineClipboard } from 'react-icons/hi2';
 
@@ -15,6 +16,10 @@ import { AlertContext } from '@/context/AlertState';
 
 const OutlineGenerator = () => {
   const { user } = useAuth();
+  const router = useRouter();
+  if (!user) {
+    router.replace('/login');
+  }
   const [loading, setLoading] = useState(false);
   const [textInput, setTextInput] = useState('');
   const [outline, setOutline] = useState('');

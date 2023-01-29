@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Dialog, Transition } from '@headlessui/react';
 import { getDescendants, NodeModel } from '@minoru/react-dnd-treeview';
+import { FirebaseError } from 'firebase/app';
 import {
   addDoc,
   collection,
@@ -38,6 +39,9 @@ import { CustomData } from '@/types';
 const Project = () => {
   const { user } = useAuth();
   const router = useRouter();
+  if (!user) {
+    router.replace('/login');
+  }
   const { id } = router.query;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -52,6 +56,31 @@ const Project = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
+    if (!user) {
+      router.replace('/login');
+    }
+    try {
+      const q = query(
+        collection(db, `projects/${id}/documents`),
+        orderBy('index', 'asc')
+      );
+      return onSnapshot(q, async (snapshot) => {
+        const arr: NodeModel<unknown>[] = [];
+        snapshot.docs.map((doc) => {
+          const obj = {
+            id: doc.id,
+            ...doc.data().node,
+          };
+          arr.push(obj);
+        });
+        setDocuments(arr);
+        setLoading(false);
+      });
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return;
+      }
+    }
     const q = query(
       collection(db, `projects/${id}/documents`),
       orderBy('index', 'asc')

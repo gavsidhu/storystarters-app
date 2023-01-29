@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import { Card, Select } from 'flowbite-react';
+import { useRouter } from 'next/router';
 import React, { useContext, useState } from 'react';
 import { HiOutlineArrowPath, HiOutlineClipboard } from 'react-icons/hi2';
 
@@ -43,6 +44,10 @@ const genres = [
 
 const StoryIdeaGenerator = () => {
   const { user } = useAuth();
+  const router = useRouter();
+  if (!user) {
+    router.replace('/login');
+  }
   const [loading, setLoading] = useState(false);
   const [storyIdea, setStoryIdea] = useState('');
   const [genre, setGenre] = useState('Drama');

@@ -1,7 +1,9 @@
 import { Menu } from '@headlessui/react';
 import { DropOptions, NodeModel, Tree } from '@minoru/react-dnd-treeview';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { FirebaseError } from 'firebase/app';
 import { doc, DocumentData, getDoc, setDoc } from 'firebase/firestore';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import {
   HiDocument,
@@ -13,6 +15,7 @@ import {
 import styles from './Main.module.css';
 
 import { db } from '@/lib/firebaseClient';
+import useAuth from '@/hooks/useAuth';
 
 import PlusDropdown from '@/components/dropdown/PlusDropdown';
 import { CustomNode } from '@/components/projects/CustomNode';
@@ -61,18 +64,34 @@ const ProjectTree = ({
   handleSelect,
   selectedNode,
 }: Props) => {
+  const { user } = useAuth();
+  const router = useRouter();
+  if (!user) {
+    router.replace('/login');
+  }
   const [treeData, setTreeData] = useState<NodeModel<unknown>[]>();
   const [project, setProject] = useState<DocumentData | undefined>();
   const [sortingArray, setSortingArray] = useState<DocumentData>([]);
 
   useEffect(() => {
-    const setSort = async () => {
-      const docRef = doc(db, `projects/${projectId}`);
-      const docSnap = (await getDoc(docRef)).data();
-      setSortingArray(docSnap?.sort);
-    };
-    setSort();
-
+    try {
+      const setSort = async () => {
+        try {
+          const docRef = doc(db, `projects/${projectId}`);
+          const docSnap = (await getDoc(docRef)).data();
+          setSortingArray(docSnap?.sort);
+        } catch (error) {
+          if (error instanceof FirebaseError) {
+            return;
+          }
+        }
+      };
+      setSort();
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return;
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treeData]);
 
@@ -95,13 +114,25 @@ const ProjectTree = ({
   };
 
   useEffect(() => {
-    const getProject = async () => {
-      const docRef = doc(db, `projects/${projectId}`);
-      const docSnap = (await getDoc(docRef)).data();
-      setProject(docSnap);
-    };
+    try {
+      const getProject = async () => {
+        try {
+          const docRef = doc(db, `projects/${projectId}`);
+          const docSnap = (await getDoc(docRef)).data();
+          setProject(docSnap);
+        } catch (error) {
+          if (error instanceof FirebaseError) {
+            return;
+          }
+        }
+      };
 
-    getProject();
+      getProject();
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        return;
+      }
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

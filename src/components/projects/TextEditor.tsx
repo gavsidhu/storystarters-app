@@ -56,7 +56,7 @@ const TextEditor = ({ content, docId }: Props) => {
     content: content,
     editorProps: {
       attributes: {
-        class: 'border border-gray-300 py-4 px-6 h-screen',
+        class: 'border border-gray-300 py-6 px-6 min-h-screen',
       },
     },
     // async onUpdate({ editor }) {

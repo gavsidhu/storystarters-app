@@ -1,6 +1,8 @@
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { HiPlus } from 'react-icons/hi2';
 
+import useAuth from '@/hooks/useAuth';
 import useProjects from '@/hooks/useProjects';
 
 import Button from '@/components/buttons/Button';
@@ -10,6 +12,11 @@ import ProjectCard from '@/components/projects/ProjectCard';
 import Skeleton from '@/components/Skeleton';
 
 const Projects = () => {
+  const { user } = useAuth();
+  const router = useRouter();
+  if (!user) {
+    router.replace('/login');
+  }
   const { projects, projectLoading } = useProjects();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
