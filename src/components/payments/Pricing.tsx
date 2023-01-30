@@ -91,7 +91,17 @@ export default function Pricing({ handlePlanSelect }: Props) {
   };
   return (
     <div className='bg-white'>
-      <div className='mx-auto max-w-7xl bg-white py-16 sm:py-24 sm:px-6 lg:px-8'>
+      <div className='mt-8 max-w-3xl space-y-1 text-center lg:hidden'>
+        <p className='text-gray-500'>
+          Step <strong>1</strong> of <strong>3</strong>
+        </p>
+        <h1 className='text-3xl'> Choose your plan</h1>
+        <p className='text-sm'>
+          You won't be charged until after your 7-day free trial. Upgrade,
+          downgrade or cancel at anytime.
+        </p>
+      </div>
+      <div className='mx-auto max-w-7xl bg-white py-16 sm:py-16 sm:px-6 lg:px-8'>
         {/* xs to lg */}
         <div className='mx-auto max-w-2xl space-y-16 lg:hidden'>
           {tiers.map((tier, tierIdx) => (
@@ -111,7 +121,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                 {/* <p className='mt-4 text-sm text-gray-500'>{tier.description}</p> */}
                 <Button
                   id={tier.priceId}
-                  className='mt-6 block w-full rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
+                  className='mt-6 block w-full rounded-md bg-primary-500 py-2 text-center text-sm font-semibold text-white hover:bg-primary-300'
                   onClick={onClick}
                   isLoading={loading}
                 >
@@ -182,7 +192,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
               >
                 <Button
                   id={tier.priceId}
-                  className='block w-full rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
+                  className='block w-full rounded-md bg-primary-500 py-2 text-center text-sm font-semibold text-white hover:bg-primary-300'
                   onClick={onClick}
                   isLoading={loading}
                 >
@@ -195,7 +205,17 @@ export default function Pricing({ handlePlanSelect }: Props) {
 
         {/* lg+ */}
         <div className='hidden lg:block'>
-          <table className='h-px w-full table-fixed'>
+          <div className='max-w-3xl space-y-1 text-left'>
+            <p className='text-gray-500'>
+              Step <strong>1</strong> of <strong>3</strong>
+            </p>
+            <h1 className='text-3xl'> Choose your plan</h1>
+            <p className='text-sm'>
+              You won't be charged until after your 7-day free trial. Upgrade,
+              downgrade or cancel at anytime.
+            </p>
+          </div>
+          <table className='mt-16 h-px w-full table-fixed'>
             <caption className='sr-only'>Pricing plan comparison</caption>
             <thead>
               <tr>
@@ -241,7 +261,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                       </p>
                       <Button
                         id={tier.priceId}
-                        className='5 absolute bottom-0 block w-full flex-grow rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
+                        className='5 absolute bottom-0 block w-full flex-grow rounded-md bg-primary-500 py-2 text-center text-sm font-semibold text-white hover:bg-primary-300'
                         onClick={onClick}
                         isLoading={loading}
                       >
@@ -282,7 +302,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                             {feature.tiers[tier.name as keyof object] ===
                             true ? (
                               <HiCheck
-                                className='h-5 w-5 text-green-500'
+                                className='h-5 w-5 text-primary-500'
                                 aria-hidden='true'
                               />
                             ) : (
@@ -315,7 +335,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                   <td key={tier.name} className='px-6 pt-5'>
                     <Button
                       id={tier.priceId}
-                      className='block w-full rounded-md border border-gray-800 bg-gray-800 py-2 text-center text-sm font-semibold text-white hover:bg-gray-900'
+                      className='block w-full rounded-md bg-primary-500 py-2 text-center text-sm font-semibold text-white hover:bg-primary-300'
                       onClick={onClick}
                       isLoading={loading}
                     >

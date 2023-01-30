@@ -35,9 +35,14 @@ const RegisterForm = ({ onSubmit, loading, googleSubmit }: Props) => {
             width={280}
             height={160}
           />
-          <h2 className='mt-6 text-center text-3xl font-bold tracking-tight text-gray-900'>
-            Create your account
-          </h2>
+          <div className='mt-6 space-y-1 text-center'>
+            <p className='text-gray-500'>
+              Step <strong>2</strong> of <strong>3</strong>
+            </p>
+            <h2 className=' text-center text-3xl font-bold tracking-tight text-gray-900'>
+              Create your account
+            </h2>
+          </div>
           <p className='mt-2 text-center text-sm text-gray-600'>
             Or{' '}
             <PrimaryLink href='/login' openNewTab={false}>
@@ -210,7 +215,7 @@ const RegisterForm = ({ onSubmit, loading, googleSubmit }: Props) => {
                   className='flex w-full justify-center'
                   isLoading={loading}
                 >
-                  Register
+                  Continue
                 </Button>
               </div>
             </form>
