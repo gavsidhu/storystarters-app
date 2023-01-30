@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { Fragment, MouseEvent, MouseEventHandler, useState } from 'react';
 import { HiCheck, HiMinus } from 'react-icons/hi2';
 
@@ -81,6 +82,7 @@ interface Props {
 }
 
 export default function Pricing({ handlePlanSelect }: Props) {
+  const router = useRouter();
   const { setPriceId } = useRegisterFlow();
   const [loading, setLoading] = useState(false);
   const onClick = (e: MouseEvent<HTMLButtonElement>) => {
@@ -92,9 +94,11 @@ export default function Pricing({ handlePlanSelect }: Props) {
   return (
     <div className='bg-white'>
       <div className='mt-8 max-w-3xl space-y-1 text-center lg:hidden'>
-        <p className='text-gray-500'>
-          Step <strong>1</strong> of <strong>3</strong>
-        </p>
+        {router.pathname === '/register' ? (
+          <p className='text-gray-500'>
+            Step <strong>1</strong> of <strong>3</strong>
+          </p>
+        ) : null}
         <h1 className='text-3xl'> Choose your plan</h1>
         <p className='text-sm'>
           You won't be charged until after your 7-day free trial. Upgrade,
@@ -206,9 +210,11 @@ export default function Pricing({ handlePlanSelect }: Props) {
         {/* lg+ */}
         <div className='hidden lg:block'>
           <div className='max-w-3xl space-y-1 text-left'>
-            <p className='text-gray-500'>
-              Step <strong>1</strong> of <strong>3</strong>
-            </p>
+            {router.pathname === '/register' ? (
+              <p className='text-gray-500'>
+                Step <strong>1</strong> of <strong>3</strong>
+              </p>
+            ) : null}
             <h1 className='text-3xl'> Choose your plan</h1>
             <p className='text-sm'>
               You won't be charged until after your 7-day free trial. Upgrade,
