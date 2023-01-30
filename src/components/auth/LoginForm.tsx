@@ -1,14 +1,14 @@
 import { AxiosError } from 'axios';
 import { FirebaseError } from 'firebase/app';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { FaGoogle } from 'react-icons/fa';
 
 import useAuth from '@/hooks/useAuth';
 
+import ResetModal from '@/components/auth/ResetModal';
 import Button from '@/components/buttons/Button';
 import Alert from '@/components/layout/Alert';
-import UnderlineLink from '@/components/links/UnderlineLink';
 
 import authErrors from '@/constant/authErrors';
 import { AlertContext } from '@/context/AlertState';
@@ -16,6 +16,11 @@ import { AlertContext } from '@/context/AlertState';
 const LoginForm = () => {
   const { signInWithEmail, signInWithGoogle, loading } = useAuth();
   const alertContext = useContext(AlertContext);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = (value: boolean) => {
+    setShowModal(value);
+  };
   // const [loading, setLoading] = useState(false)
   //Form validation
   const {
@@ -60,6 +65,7 @@ const LoginForm = () => {
   return (
     <>
       <Alert />
+      <ResetModal isOpen={showModal} handleShowModal={handleShowModal} />
       <div>
         <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
           <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
@@ -125,9 +131,13 @@ const LoginForm = () => {
 
               <div>
                 <div className='text-right text-sm'>
-                  <UnderlineLink href='#' openNewTab={false}>
+                  <Button
+                    variant='ghost'
+                    className='bg-transparent text-black outline-none hover:bg-transparent hover:text-gray-500 active:bg-transparent'
+                    onClick={() => handleShowModal(true)}
+                  >
                     Forgot your password?
-                  </UnderlineLink>
+                  </Button>
                 </div>
               </div>
 
