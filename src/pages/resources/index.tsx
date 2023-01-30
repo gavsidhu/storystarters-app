@@ -25,8 +25,8 @@ const Resources = () => {
     {
       id: '1',
       title: 'Prompt library',
-      description: 'Hundreds of writing prompts for inspiration',
-      href: '/resources/prompts',
+      description: 'Collection of writing prompts for inspiration',
+      href: '/resources/prompt-library',
       template: false,
     },
     {

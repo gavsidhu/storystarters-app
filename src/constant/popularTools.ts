@@ -1,9 +1,9 @@
 const popularTools = [
   {
     id: '1',
-    title: 'Story idea generator',
+    title: 'Plot generator',
     description: 'Generate interesting story ideas',
-    href: '/tools/story-idea-generator',
+    href: '/tools/plot-generator',
   },
   {
     id: '2',
