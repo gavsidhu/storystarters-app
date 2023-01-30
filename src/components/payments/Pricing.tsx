@@ -166,7 +166,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                             {feature.tiers[tier.name as keyof object] ===
                             true ? (
                               <HiCheck
-                                className='ml-auto h-5 w-5 text-green-500'
+                                className='ml-auto h-5 w-5 text-primary-500'
                                 aria-hidden='true'
                               />
                             ) : (
