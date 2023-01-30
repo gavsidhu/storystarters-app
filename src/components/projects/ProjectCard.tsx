@@ -68,7 +68,7 @@ const ProjectCard = ({
             </button>
           </div>
 
-          <p className='font-body font-normal text-gray-700 group-hover:text-white'>
+          <p className='font-body truncate font-normal text-gray-700 group-hover:text-white'>
             {projectDescription}
           </p>
           {wordCount && wordCountGoal > 0 ? (
@@ -77,9 +77,9 @@ const ProjectCard = ({
                 <span className='text-sm font-medium text-gray-700 group-hover:text-white'>
                   Progress
                 </span>
-                <span className='text-sm font-medium text-gray-700 group-hover:text-white'>{`${
+                <span className='text-sm font-medium text-gray-700 group-hover:text-white'>{`${Math.round(
                   (wordCount / wordCountGoal) * 100
-                }%`}</span>
+                )}%`}</span>
               </div>
               <div className='h-2.5 w-full rounded-full bg-primary-50'>
                 <div
