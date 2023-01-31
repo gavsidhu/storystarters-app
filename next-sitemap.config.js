@@ -6,6 +6,6 @@ module.exports = {
   siteUrl: 'https://app.storystarters.co',
   generateRobotsTxt: true,
   robotsTxtOptions: {
-    policies: [{ userAgent: '*', allow: '/' }],
+    policies: [{ userAgent: '*', disallow: '/' }],
   },
 };
