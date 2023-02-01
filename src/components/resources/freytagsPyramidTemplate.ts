@@ -23,7 +23,8 @@ const documents = [
     node: {
       data: {
         fileType: 'document',
-        content: '<p>Test</p>',
+        content:
+          '<p>The beginning of the story, where the setting, characters, and the main conflicts are introduced. The audience is given the background information that they need to understand the story.</p>',
       },
       parent: 'lIPDwh0EMWJkz7hCoZda',
       droppable: false,
@@ -48,7 +49,8 @@ const documents = [
     node: {
       data: {
         fileType: 'document',
-        content: '<p>Test</p>',
+        content:
+          '<p>This is the part of the story where the conflict and tension are built up. The protagonist is faced with a problem or challenge, and they begin to take actions to solve it. This is the part of the story where the audience gets to know the characters and their struggles.</p>',
       },
       parent: 'gywvfNvx0zqk2Gifpw15',
       droppable: false,
@@ -73,7 +75,8 @@ const documents = [
     node: {
       data: {
         fileType: 'document',
-        content: '<p>Test</p>',
+        content:
+          '<p>The turning point of the story, the highest point of tension. The protagonist reaches the climax where they face the most difficult challenge or conflict, this is the point where the story reaches its peak.</p>',
       },
       parent: 'tuU2PRA5pFJISbnh87Mn',
       droppable: false,
@@ -98,7 +101,8 @@ const documents = [
     node: {
       data: {
         fileType: 'document',
-        content: '<p>Test</p>',
+        content:
+          '<p>The events that follow the climax, where the characters react to the climax and try to resolve the conflicts they faced, the tension decreases. The audience gets to see the aftermath of the climax and how the characters are affected by it.</p>',
       },
       parent: 'ZZBp39IQSTWj4fApuT65',
       droppable: false,
@@ -123,7 +127,8 @@ const documents = [
     node: {
       data: {
         fileType: 'document',
-        content: '<p>Test</p>',
+        content:
+          "<p>The end of the story, where the conflicts are resolved and the story comes to a close. The audience gets to see the final outcome and the consequences of the protagonist's actions, and how the characters' lives have been affected by the events of the story.</p>",
       },
       parent: '0rIIgBh5wzdAHALvbR8x',
       droppable: false,

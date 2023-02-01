@@ -29,6 +29,7 @@ import {
 import { db } from '@/lib/firebaseClient';
 import useAuth from '@/hooks/useAuth';
 
+import Alert from '@/components/layout/Alert';
 import DeleteModal from '@/components/projects/DeleteModal';
 import ProjectTree from '@/components/projects/ProjectTree';
 import TextEditor from '@/components/projects/TextEditor';
@@ -187,6 +188,7 @@ const Project = () => {
 
   return (
     <>
+      <Alert />
       <div className='flex h-screen'>
         <DeleteModal
           isOpen={showDeleteModal}

@@ -94,7 +94,7 @@ export const TextEditorMenu = ({ editor }: Props) => {
           alertContext.addAlert(error.message, 'error', 5000);
         }
         if (error instanceof AxiosError) {
-          alertContext.addAlert(error.message, 'error', 5000);
+          alertContext.addAlert(error.response?.data.message, 'error', 5000);
         } else {
           alertContext.addAlert('Something went wrong', 'error', 5000);
         }
@@ -150,7 +150,7 @@ export const TextEditorMenu = ({ editor }: Props) => {
         alertContext.addAlert(error.message, 'error', 5000);
       }
       if (error instanceof AxiosError) {
-        alertContext.addAlert(error.message, 'error', 5000);
+        alertContext.addAlert(error.response?.data.message, 'error', 5000);
       } else {
         alertContext.addAlert('Something went wrong', 'error', 5000);
       }

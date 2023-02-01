@@ -71,14 +71,15 @@ const StoryIdeaGenerator = () => {
       setLoading(false);
     } catch (error) {
       if (error instanceof AxiosError) {
-        alertContext.addAlert(error.message, 'error', 5000);
+        alertContext.addAlert(error.response?.data.message, 'error', 5000);
       } else {
         alertContext.addAlert('Something went wrong', 'error', 5000);
       }
+      setLoading(false);
     }
   };
   return (
-    <Layout title='Story Idea Generator'>
+    <Layout title='Plot Generator'>
       <Alert />
       <div className='mx-auto lg:max-w-7xl '>
         <div className='mt-4 py-6'>

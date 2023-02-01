@@ -28,7 +28,9 @@ export default async function handler(
     try {
       await Promise.all(middlewares.map((middleware) => middleware(req, res)));
     } catch {
-      return res.status(429).send('Too Many Requests. Please try again later');
+      return res
+        .status(429)
+        .json({ message: 'Too Many Requests. Please try again later' });
     }
 
     try {
@@ -37,17 +39,17 @@ export default async function handler(
       const uid = req.body.uid;
 
       if (!idToken) {
-        return res.status(401).send('Unauthorized 1');
+        return res.status(401).json({ message: 'Unauthorized' });
       }
       let user: DecodedIdToken;
       try {
         user = await admin.auth().verifyIdToken(idToken as string);
       } catch (error) {
-        return res.status(401).send('Unauthorized 2');
+        return res.status(401).json({ message: 'Unauthorized' });
       }
 
       if (user.uid != uid) {
-        return res.status(401).send('Unauthorized 3');
+        return res.status(401).json({ message: 'Unauthorized' });
       }
 
       const docSnap = await admin
@@ -58,7 +60,7 @@ export default async function handler(
       const docData = docSnap.data();
 
       if (!docData) {
-        throw new Error('User does not exist');
+        return res.status(401).json({ message: 'Unauthorized' });
       }
 
       let isSubscribed: boolean;
@@ -74,14 +76,16 @@ export default async function handler(
       }
 
       if (!isSubscribed) {
-        return res.status(401).send('Unauthorized 4');
+        return res.status(401).json({ message: 'Unauthorized' });
       }
 
       const currentTokens = docData.subscription.tokens;
       const estimatedTokens = (text.length / 3.8 + 10) * 2;
 
       if (currentTokens <= estimatedTokens) {
-        return res.status(400).send('You have exceeded your monthly limit');
+        return res
+          .status(400)
+          .json({ message: 'You have exceeded your monthly word limit.' });
       }
       const response = await openai.createCompletion({
         model: 'text-davinci-003',
@@ -109,11 +113,10 @@ export default async function handler(
         }
       );
       if (moderationRes.data.results.flagged === true) {
-        return res
-          .status(400)
-          .send(
-            'AI generated prohibited content. Please try again or try a different selection. Monthly word limit not affected.'
-          );
+        return res.status(400).json({
+          message:
+            'AI generated prohibited content. Please try again or try a different selection. Monthly word limit not affected.',
+        });
       }
       const updatedTokens =
         currentTokens -
@@ -125,7 +128,7 @@ export default async function handler(
         .update({ 'subscription.tokens': updatedTokens });
       res.json(response.data);
     } catch (error) {
-      res.status(500).json({ msg: 'Unexpected error', error: error });
+      res.status(500).json({ message: 'Unexpected error', error: error });
     }
   } else {
     res.setHeader('Allow', 'POST');

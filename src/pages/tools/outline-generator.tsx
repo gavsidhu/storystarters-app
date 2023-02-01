@@ -45,10 +45,11 @@ const OutlineGenerator = () => {
       setLoading(false);
     } catch (error) {
       if (error instanceof AxiosError) {
-        alertContext.addAlert(error.message, 'error', 5000);
+        alertContext.addAlert(error.response?.data.message, 'error', 5000);
       } else {
         alertContext.addAlert('Something went wrong', 'error', 5000);
       }
+      setLoading(false);
     }
   };
 

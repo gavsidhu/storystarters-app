@@ -14,33 +14,33 @@ import Layout from '@/components/layout/Layout';
 import { url } from '@/constant/url';
 import { AlertContext } from '@/context/AlertState';
 
-const genres = [
-  {
-    id: '1',
-    name: 'Drama',
-    value: 'drama',
-  },
-  {
-    id: '2',
-    name: 'Fantasy',
-    value: 'fantasy',
-  },
-  {
-    id: '3',
-    name: 'Mystery',
-    value: 'mystery',
-  },
-  {
-    id: '4',
-    name: 'Romance',
-    value: 'romance',
-  },
-  {
-    id: '5',
-    name: 'Sci-Fi',
-    value: 'sci-fi',
-  },
-];
+// const genres = [
+//   {
+//     id: '1',
+//     name: 'Drama',
+//     value: 'drama',
+//   },
+//   {
+//     id: '2',
+//     name: 'Fantasy',
+//     value: 'fantasy',
+//   },
+//   {
+//     id: '3',
+//     name: 'Mystery',
+//     value: 'mystery',
+//   },
+//   {
+//     id: '4',
+//     name: 'Romance',
+//     value: 'romance',
+//   },
+//   {
+//     id: '5',
+//     name: 'Sci-Fi',
+//     value: 'sci-fi',
+//   },
+// ];
 
 const roles = [
   {
@@ -59,14 +59,14 @@ const roles = [
     id: '4',
     name: 'Love interest',
   },
-  {
-    id: '5',
-    name: 'Foil',
-  },
-  {
-    id: '6',
-    name: 'Confidant',
-  },
+  // {
+  //   id: '5',
+  //   name: 'Foil',
+  // },
+  // {
+  //   id: '6',
+  //   name: 'Confidant',
+  // },
   {
     id: '7',
     name: 'Tertiary character',
@@ -100,7 +100,7 @@ const CharacterCreator = () => {
         `${url}/api/generate/character-creator`,
         {
           uid: user?.uid,
-          genre: formData.genre,
+          // genre: formData.genre,
           role: formData.role,
           plot: formData.plot,
         }
@@ -111,10 +111,11 @@ const CharacterCreator = () => {
       setLoading(false);
     } catch (error) {
       if (error instanceof AxiosError) {
-        alertContext.addAlert(error.message, 'error', 5000);
+        alertContext.addAlert(error.response?.data.message, 'error', 5000);
       } else {
         alertContext.addAlert('Something went wrong', 'error', 5000);
       }
+      setLoading(false);
     }
   };
 
@@ -127,7 +128,7 @@ const CharacterCreator = () => {
             <p>Create a basic character profile for your story</p>
           </div>
           <div className='space-y-4'>
-            <div>
+            {/* <div>
               <Label htmlFor='genre' value='Select a genre' />
               <Select color='bg-transparent' onChange={onChange} name='genre'>
                 {genres.map((genre) => {
@@ -138,7 +139,7 @@ const CharacterCreator = () => {
                   );
                 })}
               </Select>
-            </div>
+            </div> */}
             <div>
               <Label htmlFor='role' value='Select a role' />
               <Select color='bg-transparent' onChange={onChange} name='role'>

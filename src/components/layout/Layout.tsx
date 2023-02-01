@@ -22,6 +22,7 @@ import useProjects from '@/hooks/useProjects';
 import useSubscription from '@/hooks/useSubscription';
 
 import Button from '@/components/buttons/Button';
+import Alert from '@/components/layout/Alert';
 import UnderlineLink from '@/components/links/UnderlineLink';
 import Pricing from '@/components/payments/Pricing';
 import Skeleton from '@/components/Skeleton';
@@ -105,6 +106,7 @@ export default function Layout({ children, title }: Props) {
   }
   return (
     <>
+      <Alert />
       <div>
         {/* <UpgradeModal isOpen={showUpgradeModal} handleShowModal={handleShowUpgradeModal} /> */}
         <Transition.Root show={sidebarOpen} as={Fragment}>
