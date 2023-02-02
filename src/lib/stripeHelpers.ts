@@ -200,38 +200,42 @@ export const insertPaymentRecord = async (
 };
 
 export const insertInvoiceRecord = async (invoice: Stripe.Invoice) => {
-  // Get customer's UID from Firestore
-  const customersSnap = await admin
-    .firestore()
-    .collection('users')
-    .where('stripeId', '==', invoice.customer)
-    .get();
-  if (customersSnap.size !== 1) {
-    throw new Error('User not found!');
-  }
-  // Write to invoice to a subcollection on the subscription doc.
-  await customersSnap.docs[0].ref
-    .collection('subscriptions')
-    .doc(invoice.subscription as string)
-    .collection('invoices')
-    .doc(invoice.id)
-    .set(invoice);
+  try {
+    // Get customer's UID from Firestore
+    const customersSnap = await admin
+      .firestore()
+      .collection('users')
+      .where('stripeId', '==', invoice.customer)
+      .get();
+    if (customersSnap.size !== 1) {
+      throw new Error('User not found!');
+    }
+    // Write to invoice to a subcollection on the subscription doc.
+    await customersSnap.docs[0].ref
+      .collection('subscriptions')
+      .doc(invoice.subscription as string)
+      .collection('invoices')
+      .doc(invoice.id)
+      .set(invoice);
 
-  const prices = [];
-  for (const item of invoice.lines.data) {
-    prices.push(
-      admin
-        .firestore()
-        .collection('products')
-        .doc(item.price?.product as string)
-        .collection('prices')
-        .doc(item.price?.id as string)
-    );
-  }
+    const prices = [];
+    for (const item of invoice.lines.data) {
+      prices.push(
+        admin
+          .firestore()
+          .collection('products')
+          .doc(item.price?.product as string)
+          .collection('prices')
+          .doc(item.price?.id as string)
+      );
+    }
 
-  // Update subscription payment with price data
-  await customersSnap.docs[0].ref
-    .collection('payments')
-    .doc(invoice.payment_intent as string)
-    .set({ prices }, { merge: true });
+    // Update subscription payment with price data
+    await customersSnap.docs[0].ref
+      .collection('payments')
+      .doc(invoice.payment_intent as string)
+      .set({ prices }, { merge: true });
+  } catch (error) {
+    return;
+  }
 };

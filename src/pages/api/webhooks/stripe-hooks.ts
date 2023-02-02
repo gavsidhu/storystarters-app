@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 
 import { admin } from '@/lib/firebaseAdmin';
-import { insertPaymentRecord } from '@/lib/stripeHelpers';
+import { insertInvoiceRecord } from '@/lib/stripeHelpers';
 
 import { plans } from '@/constant/plans';
 
@@ -38,11 +38,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const checkoutSession = event.data.object as Stripe.Checkout.Session;
-        const paymentIntentId = checkoutSession.payment_intent as string;
-        const paymentIntent = await stripe.paymentIntents.retrieve(
-          paymentIntentId
-        );
-        await insertPaymentRecord(paymentIntent, checkoutSession);
+        try {
+          const invoiceId = checkoutSession.invoice as string;
+          const invoice = await stripe.invoices.retrieve(invoiceId);
+          await insertInvoiceRecord(invoice);
+        } catch (error) {
+          return;
+        }
         break;
       }
 
