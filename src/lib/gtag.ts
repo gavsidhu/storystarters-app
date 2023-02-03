@@ -19,3 +19,11 @@ export const event = (
     value,
   });
 };
+
+export const initiateCheckout = () => {
+  window.gtag('event', 'conversion', {
+    send_to: 'AW-11009471108/A55zCK__qIoYEITl3IEp',
+    value: 1.0,
+    currency: 'USD',
+  });
+};
