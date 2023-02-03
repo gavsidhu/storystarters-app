@@ -1,6 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react';
-import axios from 'axios';
-import { doc, getDoc } from 'firebase/firestore';
+import axios, { AxiosError } from 'axios';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -67,7 +67,38 @@ export default function Layout({ children, title }: Props) {
     const price = (e.target as HTMLButtonElement).id;
     const userDoc = await getDoc(doc(db, 'users', user?.uid as string));
     if (userDoc.data() === undefined) {
-      throw new Error('Customer does not exist');
+      try {
+        const createCustomer = await axios.post(
+          `${url}/api/payment/create-customer`,
+          {
+            email: user?.email,
+            name: user?.displayName,
+          }
+        );
+        await setDoc(doc(db, 'users', user?.uid as string), {
+          uid: user?.uid,
+          name: user?.displayName,
+          email: user?.email,
+          stripeId: createCustomer.data.customer.id,
+        });
+
+        if (createCustomer.data.customer.id && price) {
+          const createSession = await axios.post(
+            `${url}/api/payment/create-checkout-session`,
+            {
+              customerId: createCustomer.data.customer.id,
+              priceId: price,
+            }
+          );
+
+          window.location.href = createSession.data.url;
+        }
+        return;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          return;
+        }
+      }
     }
     const customerId = userDoc?.data()?.stripeId;
     if (customerId && price) {

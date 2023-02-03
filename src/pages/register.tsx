@@ -3,6 +3,7 @@ import { FirebaseError } from 'firebase/app';
 import React, { useContext, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 
+import { initiateCheckout } from '@/lib/gtag';
 import useAuth from '@/hooks/useAuth';
 import useRegisterFlow from '@/hooks/useRegisterFlow';
 
@@ -38,6 +39,7 @@ const Register = () => {
     // );
     setLoading(true);
     try {
+      initiateCheckout();
       const stripeId = await registerWithEmail(
         data.email,
         data.password,

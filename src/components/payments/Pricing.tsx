@@ -100,7 +100,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
           </p>
         ) : null}
         <h1 className='text-3xl'> Choose your plan</h1>
-        <p className='text-sm'>
+        <p className='text-md'>
           You won't be charged until after your 7-day free trial. Upgrade,
           downgrade or cancel at anytime.
         </p>
@@ -114,8 +114,13 @@ export default function Pricing({ handlePlanSelect }: Props) {
                 <h2 className='text-lg font-medium leading-6 text-gray-900'>
                   {tier.name}
                 </h2>
-                <p className='mt-4'>
-                  <span className='text-4xl font-bold tracking-tight text-gray-900'>
+                <p className='mt-4 text-3xl font-bold tracking-tight text-gray-900'>
+                  Free for 7 days
+                </p>
+                <p>
+                  {' '}
+                  then{' '}
+                  <span className='text-xl font-bold tracking-tight text-gray-900'>
                     ${tier.priceMonthly}
                   </span>{' '}
                   <span className='text-base font-medium text-gray-500'>
@@ -216,7 +221,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
               </p>
             ) : null}
             <h1 className='text-3xl'> Choose your plan</h1>
-            <p className='text-sm'>
+            <p className='text-base'>
               You won't be charged until after your 7-day free trial. Upgrade,
               downgrade or cancel at anytime.
             </p>
@@ -254,8 +259,13 @@ export default function Pricing({ handlePlanSelect }: Props) {
                 {tiers.map((tier) => (
                   <td key={tier.name} className='h-full py-8 px-6 align-top'>
                     <div className='relative table h-full'>
+                      <p className='text-3xl font-bold tracking-tight text-gray-900'>
+                        Free for 7 days
+                      </p>
                       <p>
-                        <span className='text-4xl font-bold tracking-tight text-gray-900'>
+                        {' '}
+                        then{' '}
+                        <span className='text-xl font-bold tracking-tight text-gray-900'>
                           ${tier.priceMonthly}
                         </span>{' '}
                         <span className='text-base font-medium text-gray-500'>
