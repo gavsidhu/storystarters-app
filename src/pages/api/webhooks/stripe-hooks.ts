@@ -85,28 +85,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             customerSnap.docs[0].data().subscription.status !=
             subscription.status
           ) {
-            await admin
-              .firestore()
-              .collection('users')
-              .doc(uid)
-              .update({
-                subscription: {
-                  status: subscription.status,
-                },
-              });
+            await admin.firestore().collection('users').doc(uid).update({
+              'subscription.status': subscription.status,
+            });
           }
 
           if (subscription.cancel_at_period_end === true) {
-            await admin
-              .firestore()
-              .collection('users')
-              .doc(uid)
-              .update({
-                subscription: {
-                  status: 'canceled',
-                  cancel_at: subscription.cancel_at,
-                },
-              });
+            await admin.firestore().collection('users').doc(uid).update({
+              'subscription.status': 'canceled',
+              'subscription.cancel_at': subscription.cancel_at,
+            });
           }
         } catch (error) {
           return;
