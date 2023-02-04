@@ -95,7 +95,7 @@ export default async function handler(
         frequency_penalty: 0,
         presence_penalty: 0,
         stop: ['==='],
-        user: 'testing',
+        user: uid,
       });
 
       const moderationRes = await axios.post(
