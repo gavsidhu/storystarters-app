@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 
 import { admin } from '@/lib/firebaseAdmin';
-import { insertInvoiceRecord } from '@/lib/stripeHelpers';
+import { insertInvoiceRecord, insertPaymentRecord } from '@/lib/stripeHelpers';
 
 import { oneTimeIds } from '@/constant/oneTimeIds';
 import { plans } from '@/constant/plans';
@@ -39,15 +39,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const checkoutSession = event.data.object as Stripe.Checkout.Session;
+        const checkoutSessionId = checkoutSession.id;
+        const expandCheckoutSession = await stripe.checkout.sessions.retrieve(
+          checkoutSessionId,
+          {
+            expand: ['line_items'],
+          }
+        );
         try {
           const invoiceId = checkoutSession.invoice as string;
           if (invoiceId != null) {
             const invoice = await stripe.invoices.retrieve(invoiceId);
             await insertInvoiceRecord(invoice);
           }
-          if (checkoutSession.line_items) {
-            const priceId = checkoutSession.line_items?.data[0].price?.id;
+          if (expandCheckoutSession.line_items) {
             const customerId = checkoutSession.customer;
+            const priceId = expandCheckoutSession.line_items?.data[0].id;
             const customerSnap = await db
               .collection('users')
               .where('stripeId', '==', customerId)
@@ -72,6 +79,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 'subscription.tokens': 25000,
               });
             }
+            const paymentIntent = await stripe.paymentIntents.retrieve(
+              expandCheckoutSession.payment_intent as string
+            );
+            await insertPaymentRecord(paymentIntent, expandCheckoutSession);
           }
         } catch (error) {
           return;
