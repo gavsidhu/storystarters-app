@@ -31,9 +31,6 @@ export default async function handler(
           },
         ],
         mode: 'subscription',
-        subscription_data: {
-          trial_period_days: 7,
-        },
         success_url: `${url}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${url}?canceled=true`,
       });
