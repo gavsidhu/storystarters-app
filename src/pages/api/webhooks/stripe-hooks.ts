@@ -7,6 +7,7 @@ import Stripe from 'stripe';
 import { admin } from '@/lib/firebaseAdmin';
 import { insertInvoiceRecord } from '@/lib/stripeHelpers';
 
+import { oneTimeIds } from '@/constant/oneTimeIds';
 import { plans } from '@/constant/plans';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -40,8 +41,38 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const checkoutSession = event.data.object as Stripe.Checkout.Session;
         try {
           const invoiceId = checkoutSession.invoice as string;
-          const invoice = await stripe.invoices.retrieve(invoiceId);
-          await insertInvoiceRecord(invoice);
+          if (invoiceId != null) {
+            const invoice = await stripe.invoices.retrieve(invoiceId);
+            await insertInvoiceRecord(invoice);
+          }
+          if (checkoutSession.line_items) {
+            const priceId = checkoutSession.line_items?.data[0].price?.id;
+            const customerId = checkoutSession.customer;
+            const customerSnap = await db
+              .collection('users')
+              .where('stripeId', '==', customerId)
+              .get();
+            if (!customerSnap) {
+              res.status(500).json({ message: 'Customer does not exist' });
+            }
+            const uid = customerSnap.docs[0].id;
+
+            if (priceId === oneTimeIds.tier1) {
+              await admin.firestore().collection('users').doc(uid).update({
+                'subscription.tokens': 5000,
+              });
+            }
+            if (priceId === oneTimeIds.tier2) {
+              await admin.firestore().collection('users').doc(uid).update({
+                'subscription.tokens': 10000,
+              });
+            }
+            if (priceId === oneTimeIds.tier3) {
+              await admin.firestore().collection('users').doc(uid).update({
+                'subscription.tokens': 25000,
+              });
+            }
+          }
         } catch (error) {
           return;
         }
