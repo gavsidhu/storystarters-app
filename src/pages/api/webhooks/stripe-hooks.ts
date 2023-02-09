@@ -52,9 +52,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const invoice = await stripe.invoices.retrieve(invoiceId);
             await insertInvoiceRecord(invoice);
           }
-          if (expandCheckoutSession.line_items) {
-            const customerId = checkoutSession.customer;
-            const priceId = expandCheckoutSession.line_items?.data[0].id;
+          if (checkoutSession.mode === 'payment') {
+            const paymentIntent = await stripe.paymentIntents.retrieve(
+              expandCheckoutSession.payment_intent as string
+            );
+            await insertPaymentRecord(paymentIntent, expandCheckoutSession);
+            const customerId = paymentIntent.customer;
+            const lineItems = await stripe.checkout.sessions.listLineItems(
+              checkoutSessionId
+            );
+            const priceId = lineItems.data[0].price?.id;
             const customerSnap = await db
               .collection('users')
               .where('stripeId', '==', customerId)
@@ -79,10 +86,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 'subscription.tokens': 25000,
               });
             }
-            const paymentIntent = await stripe.paymentIntents.retrieve(
-              expandCheckoutSession.payment_intent as string
-            );
-            await insertPaymentRecord(paymentIntent, expandCheckoutSession);
           }
         } catch (error) {
           return;
