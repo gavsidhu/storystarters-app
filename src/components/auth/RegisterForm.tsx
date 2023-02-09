@@ -36,9 +36,9 @@ const RegisterForm = ({ onSubmit, loading, googleSubmit }: Props) => {
             height={160}
           />
           <div className='mt-6 space-y-1 text-center'>
-            <p className='text-gray-500'>
+            {/* <p className='text-gray-500'>
               Step <strong>2</strong> of <strong>3</strong>
-            </p>
+            </p> */}
             <h2 className=' text-center text-3xl font-bold tracking-tight text-gray-900'>
               Create your account
             </h2>
