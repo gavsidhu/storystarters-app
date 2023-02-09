@@ -46,6 +46,12 @@ const OutlineGenerator = () => {
     } catch (error) {
       if (error instanceof AxiosError) {
         alertContext.addAlert(error.response?.data.message, 'error', 5000);
+        if (
+          error.response?.data.message ===
+          'You have exceeded your monthly word limit.'
+        ) {
+          alertContext.setUpgradeModal();
+        }
       } else {
         alertContext.addAlert('Something went wrong', 'error', 5000);
       }

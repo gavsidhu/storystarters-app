@@ -6,12 +6,22 @@ import { Alert } from '@/types';
 interface IAlert {
   alerts: Alert[];
   addAlert: (msg: string, type: string, timeout: number) => void;
+  showModal: boolean;
+  setUpgradeModal: () => void;
+  closeUpgradeModal: () => void;
 }
 
 export const AlertContext = createContext<IAlert>({
   alerts: [],
   addAlert: () => {
     //add alert
+  },
+  showModal: false,
+  setUpgradeModal: () => {
+    // show modal
+  },
+  closeUpgradeModal: () => {
+    // close modal
   },
 });
 
@@ -20,6 +30,7 @@ type AlertStateProps = {
 };
 const AlertState = ({ children }: AlertStateProps) => {
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [showModal, setShowModal] = useState(false);
 
   const addAlert = (msg: string, type: string, timeout = 3000) => {
     const id = uuidv4();
@@ -30,11 +41,22 @@ const AlertState = ({ children }: AlertStateProps) => {
     }, timeout);
   };
 
+  const setUpgradeModal = () => {
+    setShowModal(true);
+  };
+
+  const closeUpgradeModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <AlertContext.Provider
       value={{
         alerts,
         addAlert,
+        showModal,
+        setUpgradeModal,
+        closeUpgradeModal,
       }}
     >
       {children}

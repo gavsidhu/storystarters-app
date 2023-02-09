@@ -4,7 +4,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { Fragment, MouseEvent, useState } from 'react';
+import React, { Fragment, MouseEvent, useContext, useState } from 'react';
 import {
   HiBars3,
   HiFolder,
@@ -21,13 +21,16 @@ import useAuth from '@/hooks/useAuth';
 import useProjects from '@/hooks/useProjects';
 import useSubscription from '@/hooks/useSubscription';
 
+import VerifyEmail from '@/components/auth/VerifyEmail';
 import Button from '@/components/buttons/Button';
 import Alert from '@/components/layout/Alert';
 import UnderlineLink from '@/components/links/UnderlineLink';
 import Pricing from '@/components/payments/Pricing';
+import UpgradeModal from '@/components/payments/UpgradeModal';
 import Skeleton from '@/components/Skeleton';
 
 import { url } from '@/constant/url';
+import { AlertContext } from '@/context/AlertState';
 
 const navigation = [
   { name: 'Home', href: '/', icon: HiHome },
@@ -40,7 +43,7 @@ const navigation = [
   },
   { name: 'Account', href: '/account', icon: HiUsers },
   {
-    name: 'Help',
+    name: 'Help Center',
     href: 'https://uplevel-hq-llc.outseta.com/support/kb',
     icon: HiQuestionMarkCircle,
   },
@@ -57,6 +60,7 @@ export default function Layout({ children, title }: Props) {
   const { projectLoading } = useProjects();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { subscription, subLoading } = useSubscription();
+  const alertContext = useContext(AlertContext);
   // const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   // const handleShowUpgradeModal = (value: boolean) => {
@@ -125,7 +129,7 @@ export default function Layout({ children, title }: Props) {
       <div>
         <div className='w-full space-x-5 py-6 px-4 text-right'>
           <UnderlineLink href='https://uplevel-hq-llc.outseta.com/support/kb'>
-            Help
+            Help Center
           </UnderlineLink>
           <Button className='text-right' variant='outline' onClick={logout}>
             Logout
@@ -135,9 +139,31 @@ export default function Layout({ children, title }: Props) {
       </div>
     );
   }
+  if (!user.emailVerified) {
+    return (
+      <div>
+        <div className='w-full space-x-5 py-6 px-4 text-right'>
+          <UnderlineLink href='https://uplevel-hq-llc.outseta.com/support/kb'>
+            Help Center
+          </UnderlineLink>
+          <Button className='text-right' variant='outline' onClick={logout}>
+            Logout
+          </Button>
+        </div>
+        <VerifyEmail />
+      </div>
+    );
+  }
   return (
     <>
       <Alert />
+
+      {alertContext.showModal && (
+        <UpgradeModal
+          showModal={alertContext.showModal}
+          closeModal={alertContext.closeUpgradeModal}
+        />
+      )}
       <div>
         {/* <UpgradeModal isOpen={showUpgradeModal} handleShowModal={handleShowUpgradeModal} /> */}
         <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -204,7 +230,7 @@ export default function Layout({ children, title }: Props) {
                     </div>
                     <nav className='mt-5 space-y-1 px-2'>
                       {navigation.map((item) => {
-                        if (item.name === 'Help') {
+                        if (item.name === 'Help Center') {
                           return (
                             <a
                               key={item.name}
@@ -306,7 +332,7 @@ export default function Layout({ children, title }: Props) {
               </div>
               <nav className='mt-5 flex-1 space-y-1 bg-[#f4f4f4] px-2'>
                 {navigation.map((item) => {
-                  if (item.name === 'Help') {
+                  if (item.name === 'Help Center') {
                     return (
                       <a
                         key={item.name}

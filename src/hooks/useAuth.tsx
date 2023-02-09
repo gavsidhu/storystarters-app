@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -123,6 +124,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           lastName,
           email,
           stripeId: createCustomer.data.customer.id,
+          subscription: {
+            status: 'free user',
+            planId: 'free',
+            upgradedToTier2: false,
+            upgradedToTier3: false,
+            tokens: 5000,
+          },
         });
         try {
           await axios.post(
@@ -142,6 +150,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               },
             }
           );
+          await sendEmailVerification(result.user as User);
         } catch (error) {
           if (error instanceof AxiosError) {
             return;
@@ -215,6 +224,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         name: result.user.displayName,
         email: result.user.email,
         stripeId: createCustomer.data.customer.id,
+        subscription: {
+          status: 'free user',
+          planId: 'free',
+          upgradedToTier2: false,
+          upgradedToTier3: false,
+          tokens: 5000,
+        },
       });
       try {
         await axios.post(

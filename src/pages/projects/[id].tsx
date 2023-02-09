@@ -16,7 +16,7 @@ import { Spinner } from 'flowbite-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
 import {
   HiArrowLeft,
   HiCheck,
@@ -30,10 +30,13 @@ import { db } from '@/lib/firebaseClient';
 import useAuth from '@/hooks/useAuth';
 
 import Alert from '@/components/layout/Alert';
+import UpgradeModal from '@/components/payments/UpgradeModal';
 import DeleteModal from '@/components/projects/DeleteModal';
 import ProjectTree from '@/components/projects/ProjectTree';
 import TextEditor from '@/components/projects/TextEditor';
 import Skeleton from '@/components/Skeleton';
+
+import { AlertContext } from '@/context/AlertState';
 
 import { CustomData } from '@/types';
 
@@ -55,6 +58,7 @@ const Project = () => {
   const [visibleTextInput, setVisibleTextInput] = useState(false);
   const [title, setTitle] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const alertContext = useContext(AlertContext);
 
   useEffect(() => {
     if (!user) {
@@ -189,6 +193,12 @@ const Project = () => {
   return (
     <>
       <Alert />
+      {alertContext.showModal && (
+        <UpgradeModal
+          showModal={alertContext.showModal}
+          closeModal={alertContext.closeUpgradeModal}
+        />
+      )}
       <div className='flex h-screen'>
         <DeleteModal
           isOpen={showDeleteModal}
