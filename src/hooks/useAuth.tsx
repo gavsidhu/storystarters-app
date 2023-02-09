@@ -254,6 +254,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
         return;
       }
+      router.push('/');
     }
     let stripeId: null | string = null;
     await signInWithPopup(auth, provider)
@@ -323,6 +324,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(result.user);
         const idToken = await result.user.getIdToken();
         axios.defaults.headers.common['Authorization'] = idToken;
+        router.push('/');
       })
       .catch((error) => {
         if (error instanceof FirebaseError) {
@@ -345,7 +347,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           result.user.metadata.lastSignInTime
         ) {
           await registerWithGoogle(true, result);
-          router.push('/');
           return;
         }
         setUser(result.user);
