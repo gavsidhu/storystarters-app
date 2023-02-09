@@ -255,6 +255,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return;
       }
       router.push('/');
+      return;
     }
     let stripeId: null | string = null;
     await signInWithPopup(auth, provider)
