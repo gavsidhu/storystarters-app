@@ -67,7 +67,8 @@ export default async function handler(
       if (
         docData.subscription.planId == plans.tier1 ||
         docData.subscription.planId == plans.tier2 ||
-        docData.subscription.planId == plans.tier3
+        docData.subscription.planId == plans.tier3 ||
+        docData.subscription.planId == plans.free
       ) {
         isSubscribed = true;
       } else {
