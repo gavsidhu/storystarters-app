@@ -11,4 +11,5 @@ export const plans = {
     process.env.NODE_ENV === 'development'
       ? 'price_1LpIRZLPakXEuKcnk2O4yrEq'
       : 'price_1LtOU9LPakXEuKcnxqPU1DcG',
+  free: 'free',
 };
