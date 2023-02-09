@@ -124,6 +124,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           lastName,
           email,
           stripeId: createCustomer.data.customer.id,
+          createdAt: Date.now(),
           subscription: {
             status: 'free user',
             planId: 'free',
@@ -224,6 +225,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         name: result.user.displayName,
         email: result.user.email,
         stripeId: createCustomer.data.customer.id,
+        createdAt: Date.now(),
         subscription: {
           status: 'free user',
           planId: 'free',
@@ -290,6 +292,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             uid: result.user.uid,
             name: result.user.displayName,
             email: result.user.email,
+            createdAt: Date.now(),
             stripeId: createCustomer.data.customer.id,
             subscription: {
               status: 'free user',
