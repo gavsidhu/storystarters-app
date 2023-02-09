@@ -289,6 +289,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             name: result.user.displayName,
             email: result.user.email,
             stripeId: createCustomer.data.customer.id,
+            subscription: {
+              status: 'free user',
+              planId: 'free',
+              upgradedToTier2: false,
+              upgradedToTier3: false,
+              tokens: 5000,
+            },
           });
           try {
             await axios.post(
