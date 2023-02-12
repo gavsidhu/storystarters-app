@@ -31,6 +31,7 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
   const [projects, setProjects] = useState<Project[] | null>(null);
   useEffect(() => {
     if (!user) {
+      setProjects(null);
       return;
     }
     setProjectLoading(true);
@@ -53,7 +54,7 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [db]);
+  }, [db, user]);
 
   const memoedValue = useMemo(
     () => ({

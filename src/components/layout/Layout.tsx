@@ -57,10 +57,10 @@ type Props = {
 export default function Layout({ children, title }: Props) {
   const router = useRouter();
   const { user, logout, loading, initialLoading } = useAuth();
-  const { projectLoading } = useProjects();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { subscription, subLoading } = useSubscription();
   const alertContext = useContext(AlertContext);
+  const { projectLoading } = useProjects();
   // const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   // const handleShowUpgradeModal = (value: boolean) => {
