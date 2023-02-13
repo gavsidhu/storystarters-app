@@ -151,12 +151,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               },
             }
           );
-          await sendEmailVerification(result.user as User);
         } catch (error) {
           if (error instanceof AxiosError) {
-            return;
+            addAlert('Unexpected error adding user', 'warning', 500);
           }
-          return;
+        }
+
+        try {
+          await sendEmailVerification(result.user as User);
+        } catch (error) {
+          addAlert(
+            'Unexpected error sending verification email',
+            'warning',
+            500
+          );
         }
 
         setUser(result.user);
@@ -252,9 +260,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         );
       } catch (error) {
         if (error instanceof AxiosError) {
-          return;
+          addAlert('Unexpected error adding user', 'warning', 1000);
         }
-        return;
       }
       router.push('/');
       return;
@@ -320,9 +327,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             );
           } catch (error) {
             if (error instanceof AxiosError) {
-              return;
+              addAlert('Unexpected error adding user', 'warning', 500);
             }
-            return;
           }
         }
         setUser(result.user);
