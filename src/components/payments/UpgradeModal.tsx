@@ -214,10 +214,10 @@ export default function UpgradeModal({ showModal, closeModal }: Props) {
                       >
                         Upgrade your account
                       </Dialog.Title>
-                      <p className='text-sm'>
+                      {/* <p className='text-sm'>
                         You've run out of AI generated words. Please upgrade to
                         a subscription plan or add more AI generated words.
-                      </p>
+                      </p> */}
                     </div>
                     <div className='mt-2'>
                       <p className='mt-3 mb-3 font-medium'>Choose a plan</p>

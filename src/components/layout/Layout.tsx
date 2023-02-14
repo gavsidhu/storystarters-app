@@ -26,6 +26,7 @@ import Button from '@/components/buttons/Button';
 import Alert from '@/components/layout/Alert';
 import UnderlineLink from '@/components/links/UnderlineLink';
 import Pricing from '@/components/payments/Pricing';
+import SidebarCard from '@/components/payments/SidebarCard';
 import UpgradeModal from '@/components/payments/UpgradeModal';
 import Skeleton from '@/components/Skeleton';
 
@@ -157,7 +158,6 @@ export default function Layout({ children, title }: Props) {
   return (
     <>
       <Alert />
-
       {alertContext.showModal && (
         <UpgradeModal
           showModal={alertContext.showModal}
@@ -166,7 +166,10 @@ export default function Layout({ children, title }: Props) {
       )}
       <div>
         {/* <UpgradeModal isOpen={showUpgradeModal} handleShowModal={handleShowUpgradeModal} /> */}
-        <Transition.Root show={sidebarOpen} as={Fragment}>
+        <Transition.Root
+          show={sidebarOpen && !alertContext.showModal}
+          as={Fragment}
+        >
           <Dialog
             as='div'
             className='relative z-40 md:hidden'
@@ -281,6 +284,10 @@ export default function Layout({ children, title }: Props) {
                       })}
                     </nav>
                   </div>
+                  <div>
+                    <SidebarCard />
+                  </div>
+
                   <div className='flex flex-shrink-0 border-t border-gray-200 p-4'>
                     <div className='flex items-center'>
                       <div>
@@ -383,6 +390,7 @@ export default function Layout({ children, title }: Props) {
                 })}
               </nav>
             </div>
+            <SidebarCard />
             <div className='flex flex-shrink-0 border-t border-gray-400 p-4'>
               <div className='flex items-center'>
                 <div>
@@ -416,7 +424,7 @@ export default function Layout({ children, title }: Props) {
           <div className='sticky top-0 z-10 bg-white pl-1 pt-1 sm:pl-3 sm:pt-3 md:hidden'>
             <button
               type='button'
-              className='-ml-0.5 -mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500'
+              className='-ml-0.5 -mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500'
               onClick={() => setSidebarOpen(true)}
             >
               <span className='sr-only'>Open sidebar</span>
