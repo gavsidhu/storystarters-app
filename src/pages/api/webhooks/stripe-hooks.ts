@@ -10,7 +10,7 @@ import { insertInvoiceRecord, insertPaymentRecord } from '@/lib/stripeHelpers';
 import { oneTimeIds } from '@/constant/oneTimeIds';
 import { plans } from '@/constant/plans';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV as string, {
   apiVersion: '2022-11-15',
 });
 export const config = {
@@ -19,8 +19,12 @@ export const config = {
   },
 };
 
+interface Subscription extends Stripe.Subscription {
+  plan?: Stripe.Plan;
+}
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const signingSecret = process.env.STRIPE_SIGNING_SECRET as string;
+  const signingSecret = process.env.STRIPE_SIGNING_SECRET_DEV as string;
   const sig = req.headers['stripe-signature'] as string;
   const reqBuffer = await buffer(req);
   let event: Stripe.Event;
@@ -94,8 +98,61 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       case 'customer.subscription.created': {
-        const subscription = event.data.object as Stripe.Subscription;
+        const subscription = event.data.object as Subscription;
         // Then define and call a function to handle the event customer.subscription.created
+        const customerId = subscription.customer;
+        const customerSnap = await db
+          .collection('users')
+          .where('stripeId', '==', customerId)
+          .get();
+        const uid = customerSnap.docs[0].id;
+        const planId = (subscription.plan as Stripe.Plan).id;
+        if (planId === plans.tier1) {
+          await admin
+            .firestore()
+            .collection('users')
+            .doc(uid)
+            .update({
+              subscription: {
+                status: subscription.status,
+                planId: subscription.plan?.id,
+                upgradedToTier2: false,
+                upgradedToTier3: false,
+                tokens: 20000,
+              },
+            });
+        }
+        if (planId === plans.tier2) {
+          await admin
+            .firestore()
+            .collection('users')
+            .doc(uid)
+            .update({
+              subscription: {
+                status: subscription.status,
+                planId: subscription.plan?.id,
+                upgradedToTier2: false,
+                upgradedToTier3: false,
+                tokens: 100000,
+              },
+            });
+        }
+        if (planId === plans.tier3) {
+          await admin
+            .firestore()
+            .collection('users')
+            .doc(uid)
+            .update({
+              subscription: {
+                status: subscription.status,
+                planId: subscription.plan?.id,
+                upgradedToTier2: false,
+                upgradedToTier3: false,
+                tokens: 200000,
+              },
+            });
+        }
+
         break;
       }
       case 'customer.subscription.deleted': {
@@ -135,12 +192,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             });
           }
 
-          if (subscription.cancel_at_period_end === true) {
-            await admin.firestore().collection('users').doc(uid).update({
-              'subscription.status': 'canceled',
-              'subscription.cancel_at': subscription.cancel_at,
-            });
-          }
+          // if (subscription.cancel_at_period_end === true) {
+          //   await admin.firestore().collection('users').doc(uid).update({
+          //     'subscription.status': 'canceled',
+          //     'subscription.cancel_at': subscription.cancel_at,
+          //   });
+          // }
         } catch (error) {
           return;
         }
@@ -160,9 +217,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       case 'invoice.payment_succeeded': {
-        interface Subscription extends Stripe.Subscription {
-          plan?: Stripe.Plan;
-        }
         const invoice = event.data.object as Stripe.Invoice;
         console.log('invoice', invoice);
         // Then define and call a function to handle the event invoice.payment_succeeded

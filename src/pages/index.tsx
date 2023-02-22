@@ -3,10 +3,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 import { HiArrowLongRight } from 'react-icons/hi2';
+import Joyride, { CallBackProps, STATUS } from 'react-joyride';
+import { useMount } from 'react-use';
 
 import useAuth from '@/hooks/useAuth';
 import useProjects from '@/hooks/useProjects';
 import useSubscription from '@/hooks/useSubscription';
+import { useTour } from '@/hooks/useTour';
 
 import EmptyState from '@/components/home/EmptyState';
 import ProjectsTable from '@/components/home/ProjectsTable';
@@ -25,7 +28,59 @@ export default function HomePage() {
   const router = useRouter();
   const { projects, projectLoading } = useProjects();
   const [loading, setLoading] = React.useState(false);
+  const { homeTour, setHomeTour } = useTour();
   useSubscription();
+  useMount(() => {
+    const checkIfPassed = localStorage.getItem('homeTourPassed');
+    if (checkIfPassed === 'true') {
+      return;
+    } else {
+      setHomeTour({
+        run: true,
+        tourActive: true,
+        steps: [
+          {
+            content: <p className='pt-4'> Let's begin our journey</p>,
+            locale: { skip: <strong aria-label='skip'>S-K-I-P</strong> },
+            placement: 'center',
+            target: 'body',
+            title: 'Welcome to Story Starters!',
+          },
+          {
+            content: (
+              <p className='pt-4'>
+                {' '}
+                Generate ideas, create characters and outline your story with
+                our powerful tools.
+              </p>
+            ),
+            spotlightPadding: 20,
+            target: '.home-tools-step',
+            title: 'Tools',
+          },
+          {
+            content: 'Find writing prompts and story structure templates here.',
+            placement: 'bottom',
+            styles: {
+              options: {
+                width: 300,
+              },
+            },
+            target: '.home-resources-step',
+            title: 'Resources',
+          },
+          {
+            content: (
+              <p>Let's create a project using the Hero's Journey Template</p>
+            ),
+            placement: 'top',
+            target: '#resource2',
+            title: 'Create a project',
+          },
+        ],
+      });
+    }
+  });
   if (!user) {
     router.replace('/login');
     return;
@@ -46,7 +101,7 @@ export default function HomePage() {
       template: false,
     },
     {
-      id: '2',
+      id: 'resource2',
       title: "Hero's journey template",
       description: "Create a project using the hero's journey story structure",
       href: '#',
@@ -68,11 +123,33 @@ export default function HomePage() {
       },
     },
   ];
+
+  const handleTourCallback = (data: CallBackProps) => {
+    const { status } = data;
+    if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
+      window.localStorage.setItem('homeTourPassed', 'true');
+    }
+  };
   return (
     <Layout title='Home'>
       {/* <Seo templateTitle='Home' /> */}
       <Seo />
-      <div className='mx-auto lg:max-w-7xl '>
+      <Joyride
+        callback={handleTourCallback}
+        steps={homeTour.steps}
+        run={homeTour.run}
+        continuous
+        hideCloseButton
+        scrollToFirstStep
+        showProgress
+        showSkipButton
+        styles={{
+          options: {
+            zIndex: 10000,
+          },
+        }}
+      />
+      <div className='home-step-1 mx-auto lg:max-w-7xl'>
         <div className='mt-4 py-6'>
           {!projects || projects.length === 0 ? (
             <EmptyState />
@@ -80,7 +157,7 @@ export default function HomePage() {
             <ProjectsTable projects={projects} />
           )}
         </div>
-        <div>
+        <div className='home-tools-step'>
           <div className='flex flex-row justify-between'>
             <div className='px-1 py-2'>
               <h2 className='text-2xl font-semibold'>Popular tools</h2>
@@ -106,7 +183,7 @@ export default function HomePage() {
             })}
           </div>
         </div>
-        <div>
+        <div className='home-resources-step'>
           <div className='flex flex-row justify-between'>
             <div className='px-1 py-2'>
               <h2 className='text-2xl font-semibold'>Popular resources</h2>

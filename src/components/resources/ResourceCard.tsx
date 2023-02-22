@@ -7,13 +7,15 @@ interface Props extends ComponentProps<'div'> {
   title: string;
   description: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
+  id: string;
 }
-const ResourceCard = ({ href, title, description, onClick }: Props) => {
+const ResourceCard = ({ href, title, description, onClick, id }: Props) => {
   return (
     <Card
       href={href}
       className='cardShadow group rounded-2xl border-none p-5 hover:bg-primary-500'
       onClick={onClick}
+      id={id}
     >
       <div className='space-y-2'>
         <div className='inline-flex rounded-full bg-primary-500 p-2 group-hover:bg-white'>

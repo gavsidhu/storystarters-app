@@ -41,7 +41,7 @@ const SidebarCard = () => {
     }
   };
   return (
-    <div id='sidebar-card' className='rounded-lg border-t p-2'>
+    <div id='sidebar-card' className='rounded-lg border-t border-gray-200 p-2'>
       <div className='flex flex-row items-center justify-between'>
         <div>
           <div className='mb-3 flex items-center'>

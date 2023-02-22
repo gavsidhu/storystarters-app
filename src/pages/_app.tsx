@@ -9,6 +9,7 @@ import '@/styles/globals.css';
 import { AuthProvider } from '@/hooks/useAuth';
 import { ProjectProvider } from '@/hooks/useProjects';
 import { RegisterFlowProvider } from '@/hooks/useRegisterFlow';
+import { TourProvider } from '@/hooks/useTour';
 
 import AlertState from '@/context/AlertState';
 import GlobalDndContext from '@/context/DnDContext';
@@ -81,9 +82,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <AlertState>
           <AuthProvider>
             <ProjectProvider>
-              <GlobalDndContext>
-                <Component {...pageProps} />
-              </GlobalDndContext>
+              <TourProvider>
+                <GlobalDndContext>
+                  <Component {...pageProps} />
+                </GlobalDndContext>
+              </TourProvider>
             </ProjectProvider>
           </AuthProvider>
         </AlertState>

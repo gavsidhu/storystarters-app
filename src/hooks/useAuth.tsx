@@ -125,13 +125,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           email,
           stripeId: createCustomer.data.customer.id,
           createdAt: Date.now(),
-          subscription: {
-            status: 'free user',
-            planId: 'free',
-            upgradedToTier2: false,
-            upgradedToTier3: false,
-            tokens: 5000,
-          },
         });
         try {
           await axios.post(
@@ -234,13 +227,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         email: result.user.email,
         stripeId: createCustomer.data.customer.id,
         createdAt: Date.now(),
-        subscription: {
-          status: 'free user',
-          planId: 'free',
-          upgradedToTier2: false,
-          upgradedToTier3: false,
-          tokens: 5000,
-        },
       });
       try {
         await axios.post(
@@ -301,13 +287,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             email: result.user.email,
             createdAt: Date.now(),
             stripeId: createCustomer.data.customer.id,
-            subscription: {
-              status: 'free user',
-              planId: 'free',
-              upgradedToTier2: false,
-              upgradedToTier3: false,
-              tokens: 5000,
-            },
           });
           try {
             await axios.post(

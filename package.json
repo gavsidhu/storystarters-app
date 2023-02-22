@@ -65,6 +65,8 @@
     "react-gtm-module": "^2.0.11",
     "react-hook-form": "^7.40.0",
     "react-icons": "^4.7.1",
+    "react-joyride": "^2.5.3",
+    "react-use": "^17.4.0",
     "stripe": "^11.3.0",
     "tailwind-merge": "^1.8.0",
     "use-debounce": "^9.0.2",

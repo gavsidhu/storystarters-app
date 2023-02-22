@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 import { plans } from '@/constant/plans';
 import { url } from '@/constant/url';
 // This is your test secret API key.
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV as string, {
   apiVersion: '2022-11-15',
 });
 
@@ -23,6 +23,8 @@ export default async function handler(
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
         billing_address_collection: 'auto',
+        success_url: `${url}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${url}?canceled=true`,
         line_items: [
           {
             price: priceId,
@@ -32,8 +34,15 @@ export default async function handler(
         ],
         mode: 'subscription',
         allow_promotion_codes: true,
-        success_url: `${url}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${url}?canceled=true`,
+        subscription_data: {
+          trial_period_days: 7,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          trial_settings: {
+            end_behavior: { missing_payment_method: 'pause' },
+          },
+        },
+        payment_method_collection: 'if_required',
       });
 
       res.json({ url: session.url });

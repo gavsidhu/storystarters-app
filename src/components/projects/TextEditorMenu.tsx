@@ -13,9 +13,13 @@ import {
   FaParagraph,
   FaUnderline,
 } from 'react-icons/fa';
+import { CallBackProps, STATUS } from 'react-joyride';
+import Joyride from 'react-joyride';
+import { useMount } from 'react-use';
 
 import axiosApiInstance from '@/lib/updateIdToken';
 import useAuth from '@/hooks/useAuth';
+import { useTour } from '@/hooks/useTour';
 
 import Button from '@/components/buttons/Button';
 
@@ -44,6 +48,51 @@ export const TextEditorMenu = ({ editor }: Props) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const alertContext = useContext(AlertContext);
+  const { editorTour, setEditorTour } = useTour();
+
+  useMount(() => {
+    const checkIfPassed = localStorage.getItem('editorTourPassed');
+    if (checkIfPassed === 'true') {
+      return;
+    } else {
+      setEditorTour({
+        run: true,
+        tourActive: true,
+        steps: [
+          {
+            content: (
+              <p>
+                Rewrite sentences or paragraphs by selecting the text you want
+                to rewrite and clicking the "Rewrite" button. The AI will the
+                rephrase your selection.
+              </p>
+            ),
+            placement: 'bottom',
+            target: '.tour-rewrite',
+            disableBeacon: true,
+          },
+          {
+            content: (
+              <p>
+                Build on your ideas by selecting the text you want to expand and
+                clicking the "Expand" button. The AI will use your selected text
+                for context and continue writing your story for you.
+              </p>
+            ),
+            placement: 'bottom',
+            target: '.tour-expand',
+            disableBeacon: true,
+          },
+        ],
+      });
+    }
+  });
+  const handleTourCallback = (data: CallBackProps) => {
+    const { status } = data;
+    if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
+      window.localStorage.setItem('editorTourPassed', 'true');
+    }
+  };
 
   const fontChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     editor?.chain().focus().setFontFamily(e.target.value).run();
@@ -170,6 +219,21 @@ export const TextEditorMenu = ({ editor }: Props) => {
   };
   return (
     <div className='overflow-x-auto'>
+      <Joyride
+        callback={handleTourCallback}
+        steps={editorTour.steps}
+        run={editorTour.run}
+        continuous
+        hideCloseButton
+        scrollToFirstStep
+        showSkipButton
+        disableCloseOnEsc
+        styles={{
+          options: {
+            zIndex: 10000,
+          },
+        }}
+      />
       <div className='flex w-full flex-row items-center space-x-4 py-2'>
         <div className='w-1/4'>
           <Select onChange={fontChange} color='bg-transparent'>
@@ -277,7 +341,7 @@ export const TextEditorMenu = ({ editor }: Props) => {
             <Button
               onClick={onRewrite}
               variant='outline'
-              className='py-1'
+              className='tour-rewrite py-1'
               disabled={loading}
             >
               Rewrite
@@ -287,7 +351,7 @@ export const TextEditorMenu = ({ editor }: Props) => {
             <Button
               onClick={onExpand}
               variant='outline'
-              className='py-1'
+              className='tour-expand py-1'
               disabled={loading}
             >
               Expand

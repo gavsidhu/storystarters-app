@@ -25,9 +25,13 @@ import {
   HiTrash,
   HiXMark,
 } from 'react-icons/hi2';
+import { CallBackProps, STATUS } from 'react-joyride';
+import Joyride from 'react-joyride';
+import { useMount } from 'react-use';
 
 import { db } from '@/lib/firebaseClient';
 import useAuth from '@/hooks/useAuth';
+import { useTour } from '@/hooks/useTour';
 
 import Alert from '@/components/layout/Alert';
 import UpgradeModal from '@/components/payments/UpgradeModal';
@@ -59,6 +63,7 @@ const Project = () => {
   const [title, setTitle] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const alertContext = useContext(AlertContext);
+  const { projectTour, setProjectTour } = useTour();
 
   useEffect(() => {
     if (!user) {
@@ -104,6 +109,60 @@ const Project = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [db]);
+
+  useMount(() => {
+    const checkIfPassed = localStorage.getItem('projectTourPassed');
+    if (checkIfPassed === 'true') {
+      return;
+    } else {
+      setProjectTour({
+        run: true,
+        tourActive: true,
+        steps: [
+          {
+            content: <p className='pt-4'> Let's take a tour.</p>,
+            locale: { skip: <strong aria-label='skip'>S-K-I-P</strong> },
+            placement: 'center',
+            target: 'body',
+            title: 'Welcome to the project workspace',
+          },
+          {
+            content: <p className='pt-4'> Add files and folders here.</p>,
+            spotlightPadding: 20,
+            target: '.tour-dropdown',
+          },
+          {
+            content:
+              'Organize your project structure by dragging and dropping files and folders.',
+            placement: 'right',
+            styles: {
+              options: {
+                width: 300,
+              },
+            },
+            target: '.Main_treeRoot__XPjah',
+          },
+          {
+            content: (
+              <p>
+                Click on a folder to see its contents. Click on a file to open
+                it in the workspace
+              </p>
+            ),
+            placement: 'right',
+            target: '.CustomNode_expandIconWrapper__D0LrH ',
+          },
+        ],
+      });
+    }
+  });
+
+  const handleTourCallback = (data: CallBackProps) => {
+    const { status } = data;
+    if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
+      window.localStorage.setItem('projectTourPassed', 'true');
+    }
+  };
 
   const handleSelect = (node: NodeModel<CustomData>) => {
     setSelectedNode(node);
@@ -193,6 +252,21 @@ const Project = () => {
   return (
     <>
       <Alert />
+      <Joyride
+        callback={handleTourCallback}
+        steps={projectTour.steps}
+        run={projectTour.run}
+        continuous
+        hideCloseButton
+        scrollToFirstStep
+        showSkipButton
+        disableCloseOnEsc
+        styles={{
+          options: {
+            zIndex: 10000,
+          },
+        }}
+      />
       {alertContext.showModal && (
         <UpgradeModal
           showModal={alertContext.showModal}

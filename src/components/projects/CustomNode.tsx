@@ -51,7 +51,7 @@ export const CustomNode: React.FC<Props> = (props) => {
           </div>
         )}
       </div>
-      <div>
+      <div className={data?.fileType}>
         <TypeIcon droppable={droppable} fileType={data?.fileType} />
       </div>
       <div className={styles.labelGridItem}>

@@ -27,6 +27,7 @@ import Alert from '@/components/layout/Alert';
 import UnderlineLink from '@/components/links/UnderlineLink';
 import Pricing from '@/components/payments/Pricing';
 import SidebarCard from '@/components/payments/SidebarCard';
+import TrialEnded from '@/components/payments/TrialEnded';
 import UpgradeModal from '@/components/payments/UpgradeModal';
 import Skeleton from '@/components/Skeleton';
 
@@ -137,6 +138,21 @@ export default function Layout({ children, title }: Props) {
           </Button>
         </div>
         <Pricing handlePlanSelect={handlePlanSelect} />
+      </div>
+    );
+  }
+  if (subscription.status === 'paused' || subscription.status === 'canceled') {
+    return (
+      <div>
+        <div className='w-full space-x-5 py-6 px-4 text-right'>
+          <UnderlineLink href='https://uplevel-hq-llc.outseta.com/support/kb'>
+            Help Center
+          </UnderlineLink>
+          <Button className='text-right' variant='outline' onClick={logout}>
+            Logout
+          </Button>
+        </div>
+        <TrialEnded />
       </div>
     );
   }

@@ -4,7 +4,7 @@ import { admin } from '@/lib/firebaseAdmin';
 
 import { plans } from '@/constant/plans';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV as string, {
   apiVersion: '2022-11-15',
 });
 interface Subscription extends Stripe.Subscription {

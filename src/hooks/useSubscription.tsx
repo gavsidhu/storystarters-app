@@ -51,8 +51,7 @@ const useSubscription = () => {
         if (
           plan === plans.tier1 ||
           plan === plans.tier2 ||
-          plan === plans.tier3 ||
-          plan === plans.free
+          plan === plans.tier3
         ) {
           setSubscription({ status: data.data()?.subscription.status, plan });
           setLoading(false);
