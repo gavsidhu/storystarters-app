@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 import { plans } from '@/constant/plans';
 import { url } from '@/constant/url';
 // This is your test secret API key.
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV as string, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15',
 });
 

@@ -10,7 +10,7 @@ import { insertInvoiceRecord, insertPaymentRecord } from '@/lib/stripeHelpers';
 import { oneTimeIds } from '@/constant/oneTimeIds';
 import { plans } from '@/constant/plans';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV as string, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15',
 });
 export const config = {

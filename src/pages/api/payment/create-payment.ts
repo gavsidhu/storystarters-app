@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
 // This is your test secret API key.
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_DEV as string, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15',
 });
 //Commented out to remove warning
