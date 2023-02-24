@@ -4,7 +4,6 @@ import {
   DocumentReference,
   getDoc,
 } from 'firebase/firestore';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { db } from '@/lib/firebaseClient';
@@ -24,7 +23,6 @@ type Sub = {
 
 const useSubscription = () => {
   const { user } = useAuth();
-  const router = useRouter();
   const [subscription, setSubscription] = useState<Sub | null>(null);
   const [subLoading, setLoading] = useState(true);
   //const router = useRouter()
@@ -35,12 +33,7 @@ const useSubscription = () => {
       const docRef = doc(db, 'users', user?.uid as string);
       getData(docRef).then(async (data) => {
         if (!data.data()?.subscription) {
-          router.push('/login');
-          setLoading(false);
-          return;
-        }
-        if (data.data() === undefined) {
-          setSubscription(null);
+          // router.push('/login')
           setLoading(false);
           return;
         }
@@ -50,6 +43,11 @@ const useSubscription = () => {
           return;
         }
         const plan = data.data()?.subscription.planId;
+        if (data.data() === undefined) {
+          setSubscription(null);
+          setLoading(false);
+          return;
+        }
         if (
           plan === plans.tier1 ||
           plan === plans.tier2 ||
@@ -66,7 +64,6 @@ const useSubscription = () => {
       setLoading(false);
       return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
   return { subscription, subLoading };
 };

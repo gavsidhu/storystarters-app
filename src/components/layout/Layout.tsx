@@ -132,21 +132,7 @@ export default function Layout({ children, title }: Props) {
     router.replace('/login');
     return <Skeleton className='h-screen w-screen' />;
   }
-  if (subscription === null && !subLoading) {
-    return (
-      <div>
-        <div className='w-full space-x-5 py-6 px-4 text-right'>
-          <UnderlineLink href='https://uplevel-hq-llc.outseta.com/support/kb'>
-            Help Center
-          </UnderlineLink>
-          <Button className='text-right' variant='outline' onClick={logout}>
-            Logout
-          </Button>
-        </div>
-        <Pricing handlePlanSelect={handlePlanSelect} />
-      </div>
-    );
-  }
+
   if (
     subscription?.status === 'paused' ||
     subscription?.status === 'canceled'
@@ -177,6 +163,22 @@ export default function Layout({ children, title }: Props) {
           </Button>
         </div>
         <VerifyEmail />
+      </div>
+    );
+  }
+
+  if (subscription === null) {
+    return (
+      <div>
+        <div className='w-full space-x-5 py-6 px-4 text-right'>
+          <UnderlineLink href='https://uplevel-hq-llc.outseta.com/support/kb'>
+            Help Center
+          </UnderlineLink>
+          <Button className='text-right' variant='outline' onClick={logout}>
+            Logout
+          </Button>
+        </div>
+        <Pricing handlePlanSelect={handlePlanSelect} />
       </div>
     );
   }
