@@ -1,16 +1,11 @@
+/* eslint-disable no-console */
 import { Dialog, Transition } from '@headlessui/react';
 import axios, { AxiosError } from 'axios';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, {
-  Fragment,
-  MouseEvent,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React, { Fragment, MouseEvent, useContext, useState } from 'react';
 import {
   HiBars3,
   HiFolder,
@@ -69,13 +64,16 @@ export default function Layout({ children, title }: Props) {
   const { subscription, subLoading } = useSubscription();
   const alertContext = useContext(AlertContext);
   const { projectLoading } = useProjects();
+  console.log('subscription', subscription);
+  console.log('subLoading', subLoading);
+  console.log('initialLoading', initialLoading);
+  console.log('projectLoading', projectLoading);
+
   // const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   // const handleShowUpgradeModal = (value: boolean) => {
   //   setShowUpgradeModal(value);
   // };
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  useEffect(() => {}, [subscription]);
 
   const handlePlanSelect = async (e: MouseEvent<HTMLButtonElement>) => {
     const price = (e.target as HTMLButtonElement).id;
@@ -134,7 +132,7 @@ export default function Layout({ children, title }: Props) {
     router.replace('/login');
     return <Skeleton className='h-screen w-screen' />;
   }
-  if (subscription === null) {
+  if (subscription === null && !subLoading) {
     return (
       <div>
         <div className='w-full space-x-5 py-6 px-4 text-right'>
@@ -149,7 +147,10 @@ export default function Layout({ children, title }: Props) {
       </div>
     );
   }
-  if (subscription.status === 'paused' || subscription.status === 'canceled') {
+  if (
+    subscription?.status === 'paused' ||
+    subscription?.status === 'canceled'
+  ) {
     return (
       <div>
         <div className='w-full space-x-5 py-6 px-4 text-right'>
