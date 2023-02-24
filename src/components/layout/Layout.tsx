@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Dialog, Transition } from '@headlessui/react';
 import axios, { AxiosError } from 'axios';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -64,10 +63,6 @@ export default function Layout({ children, title }: Props) {
   const { subscription, subLoading } = useSubscription();
   const alertContext = useContext(AlertContext);
   const { projectLoading } = useProjects();
-  console.log('subscription', subscription);
-  console.log('subLoading', subLoading);
-  console.log('initialLoading', initialLoading);
-  console.log('projectLoading', projectLoading);
 
   // const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
