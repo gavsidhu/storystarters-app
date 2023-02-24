@@ -156,8 +156,39 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         break;
       }
       case 'customer.subscription.deleted': {
-        const subscription = event.data.object;
-        // Then define and call a function to handle the event customer.subscription.deleted
+        try {
+          const subscription = event.data.object as Stripe.Subscription;
+          // Then define and call a function to handle the event customer.subscription.deleted
+          const customerId = subscription.customer;
+          const customerSnap = await db
+            .collection('users')
+            .where('stripeId', '==', customerId)
+            .get();
+          const uid = customerSnap.docs[0].id;
+          if (!customerSnap.docs[0].data().subscription) {
+            res.status(500).json({ message: 'Customer is not subscribed' });
+          }
+          if (subscription.trial_end === null) {
+            res.status(500).json({ message: 'Trial end is null' });
+          }
+          if (
+            customerSnap.docs[0].data().subscription.status !=
+            subscription.status
+          ) {
+            await admin.firestore().collection('users').doc(uid).update({
+              'subscription.status': subscription.status,
+            });
+          }
+
+          // if (subscription.cancel_at_period_end === true) {
+          //   await admin.firestore().collection('users').doc(uid).update({
+          //     'subscription.status': 'canceled',
+          //     'subscription.cancel_at': subscription.cancel_at,
+          //   });
+          // }
+        } catch (error) {
+          return;
+        }
         break;
       }
 
