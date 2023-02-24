@@ -4,7 +4,13 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { Fragment, MouseEvent, useContext, useState } from 'react';
+import React, {
+  Fragment,
+  MouseEvent,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import {
   HiBars3,
   HiFolder,
@@ -68,6 +74,8 @@ export default function Layout({ children, title }: Props) {
   // const handleShowUpgradeModal = (value: boolean) => {
   //   setShowUpgradeModal(value);
   // };
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  useEffect(() => {}, [subscription]);
 
   const handlePlanSelect = async (e: MouseEvent<HTMLButtonElement>) => {
     const price = (e.target as HTMLButtonElement).id;
