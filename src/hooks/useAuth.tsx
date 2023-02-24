@@ -249,8 +249,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           addAlert('Unexpected error adding user', 'warning', 1000);
         }
       }
-      router.push('/');
-      return;
+      // router.push('/');
+      // return;
     }
     let stripeId: null | string = null;
     await signInWithPopup(auth, provider)
@@ -313,7 +313,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(result.user);
         const idToken = await result.user.getIdToken();
         axios.defaults.headers.common['Authorization'] = idToken;
-        router.push('/');
+        // router.push('/');
       })
       .catch((error) => {
         if (error instanceof FirebaseError) {

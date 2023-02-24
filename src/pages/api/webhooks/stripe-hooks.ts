@@ -24,7 +24,7 @@ interface Subscription extends Stripe.Subscription {
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const signingSecret = process.env.STRIPE_SIGNING_SECRET_DEV as string;
+  const signingSecret = process.env.STRIPE_SIGNING_SECRET as string;
   const sig = req.headers['stripe-signature'] as string;
   const reqBuffer = await buffer(req);
   let event: Stripe.Event;
