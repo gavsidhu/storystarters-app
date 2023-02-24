@@ -1,11 +1,13 @@
 import { User } from 'firebase/auth';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { AuthAction, withAuthUserTokenSSR } from 'next-firebase-auth';
 import * as React from 'react';
 import { HiArrowLongRight } from 'react-icons/hi2';
 import Joyride, { CallBackProps, STATUS } from 'react-joyride';
 import { useMount } from 'react-use';
 
+import { admin } from '@/lib/firebaseAdmin';
 import useAuth from '@/hooks/useAuth';
 import useProjects from '@/hooks/useProjects';
 import useSubscription from '@/hooks/useSubscription';
@@ -21,9 +23,14 @@ import Seo from '@/components/Seo';
 import Skeleton from '@/components/Skeleton';
 import ToolCard from '@/components/tools/ToolCard';
 
+import { plans } from '@/constant/plans';
 import popularTools from '@/constant/popularTools';
 
-export default function HomePage() {
+type Props = {
+  subscription: { status: string; plan: string };
+};
+
+export default function HomePage({ subscription }: Props) {
   const { user } = useAuth();
   const router = useRouter();
   const { projects, projectLoading } = useProjects();
@@ -131,7 +138,7 @@ export default function HomePage() {
     }
   };
   return (
-    <Layout title='Home'>
+    <Layout title='Home' subscription={subscription}>
       {/* <Seo templateTitle='Home' /> */}
       <Seo />
       <Joyride
@@ -215,3 +222,40 @@ export default function HomePage() {
     </Layout>
   );
 }
+
+export const getServerSideProps = withAuthUserTokenSSR({
+  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+})(async ({ AuthUser }) => {
+  let subscription = null;
+
+  const data = await admin.firestore().doc(`users/${AuthUser.id}`).get();
+
+  if (!data.data()?.subscription) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  if (!data.data()?.subscription.planId) {
+    return {
+      props: {
+        subscription,
+      },
+    };
+  }
+
+  const plan = data.data()?.subscription.planId;
+
+  if (plan === plans.tier1 || plan === plans.tier2 || plan === plans.tier3) {
+    subscription = { status: data.data()?.subscription.status, plan };
+  }
+
+  return {
+    props: {
+      subscription,
+    },
+  };
+});

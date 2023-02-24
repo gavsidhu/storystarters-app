@@ -19,7 +19,6 @@ import {
 import { db } from '@/lib/firebaseClient';
 import useAuth from '@/hooks/useAuth';
 import useProjects from '@/hooks/useProjects';
-import useSubscription from '@/hooks/useSubscription';
 
 import VerifyEmail from '@/components/auth/VerifyEmail';
 import Button from '@/components/buttons/Button';
@@ -54,13 +53,14 @@ const navigation = [
 type Props = {
   title: string;
   children: React.ReactNode;
+  subscription: { status: string; plan: string };
 };
 
-export default function Layout({ children, title }: Props) {
+export default function Layout({ children, title, subscription }: Props) {
   const router = useRouter();
   const { user, logout, loading, initialLoading } = useAuth();
+  // const { subLoading } = useSubscription()
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { subscription, subLoading } = useSubscription();
   const alertContext = useContext(AlertContext);
   const { projectLoading } = useProjects();
 
@@ -120,7 +120,7 @@ export default function Layout({ children, title }: Props) {
       window.location.href = createSession.data.url;
     }
   };
-  if (loading || subLoading || initialLoading || projectLoading) {
+  if (loading || initialLoading || projectLoading) {
     return <Skeleton className='h-screen w-screen' />;
   }
   if (!user) {

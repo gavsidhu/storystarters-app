@@ -6,6 +6,7 @@ import TagManager from 'react-gtm-module';
 
 import '@/styles/globals.css';
 
+import initAuth from '@/lib/initAuth';
 import { AuthProvider } from '@/hooks/useAuth';
 import { ProjectProvider } from '@/hooks/useProjects';
 import { RegisterFlowProvider } from '@/hooks/useRegisterFlow';
@@ -16,6 +17,7 @@ import GlobalDndContext from '@/context/DnDContext';
 
 import * as gtag from '../lib/gtag';
 
+initAuth();
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   useEffect(() => {

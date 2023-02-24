@@ -16,6 +16,7 @@ import { Spinner } from 'flowbite-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { AuthAction, withAuthUserTokenSSR } from 'next-firebase-auth';
 import React, { Fragment, useContext, useEffect, useState } from 'react';
 import {
   HiArrowLeft,
@@ -29,6 +30,7 @@ import { CallBackProps, STATUS } from 'react-joyride';
 import Joyride from 'react-joyride';
 import { useMount } from 'react-use';
 
+import { admin } from '@/lib/firebaseAdmin';
 import { db } from '@/lib/firebaseClient';
 import useAuth from '@/hooks/useAuth';
 import { useTour } from '@/hooks/useTour';
@@ -40,6 +42,7 @@ import ProjectTree from '@/components/projects/ProjectTree';
 import TextEditor from '@/components/projects/TextEditor';
 import Skeleton from '@/components/Skeleton';
 
+import { plans } from '@/constant/plans';
 import { AlertContext } from '@/context/AlertState';
 
 import { CustomData } from '@/types';
@@ -506,3 +509,52 @@ const Project = () => {
 };
 
 export default Project;
+
+export const getServerSideProps = withAuthUserTokenSSR({
+  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
+})(async ({ AuthUser }) => {
+  let subscription = null;
+
+  const data = await admin.firestore().doc(`users/${AuthUser.id}`).get();
+
+  if (!data.data()?.subscription) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  if (!data.data()?.subscription.planId) {
+    return {
+      props: {
+        subscription,
+      },
+    };
+  }
+
+  const plan = data.data()?.subscription.planId;
+
+  if (plan === plans.tier1 || plan === plans.tier2 || plan === plans.tier3) {
+    subscription = { status: data.data()?.subscription.status, plan };
+  }
+
+  if (
+    subscription?.status === 'canceled' ||
+    subscription?.status === 'paused'
+  ) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      subscription,
+    },
+  };
+});

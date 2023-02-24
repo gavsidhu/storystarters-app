@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import { admin } from '@/lib/firebaseAdmin';
@@ -44,7 +44,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       res.status(200).json(response.data);
     } catch (error) {
-      return res.status(400).send(`Unexpected error: ${error}`);
+      if (error instanceof AxiosError) {
+        return res.status(400).json(error.message);
+      }
+      return res.status(400).send(`Unexpected error2: ${error}`);
     }
   }
 };

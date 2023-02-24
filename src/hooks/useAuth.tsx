@@ -131,7 +131,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             `${url}/api/crm/add-person`,
             {
               uid: result.user.uid,
-              name: firstName + ' ' + lastName,
               personData: {
                 Email: email,
                 FirstName: firstName,
@@ -163,6 +162,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(result.user);
         const idToken = await result.user.getIdToken();
         axios.defaults.headers.common['Authorization'] = idToken;
+        await axios.get(`${url}/api/auth/login`);
       })
       .catch((error: FirebaseError) => {
         addAlert(authErrors[error.code] as string, 'error', 5000);
@@ -178,6 +178,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(result.user);
         const idToken = await result.user.getIdToken();
         axios.defaults.headers.common['Authorization'] = idToken;
+        await axios.get(`${url}/api/auth/login`);
         router.push('/');
       })
       .catch((error: FirebaseError) => {
@@ -193,6 +194,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signOut(auth)
       .then(async () => {
         delete axios.defaults.headers.common['Authorization'];
+        await axios.get(`${url}/api/auth/logout`);
         setUser(null);
       })
       .catch((error) =>
@@ -249,6 +251,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           addAlert('Unexpected error adding user', 'warning', 1000);
         }
       }
+      await axios.get(`${url}/api/auth/login`);
       router.push('/');
       return;
     }
@@ -266,6 +269,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           result.user.metadata.lastSignInTime
         ) {
           addAlert('Account already registered', 'error', 3000);
+          await axios.get(`${url}/api/auth/login`);
           router.push('/');
           return;
         }
@@ -313,6 +317,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(result.user);
         const idToken = await result.user.getIdToken();
         axios.defaults.headers.common['Authorization'] = idToken;
+        await axios.get(`${url}/api/auth/login`);
       })
       .catch((error) => {
         if (error instanceof FirebaseError) {
@@ -340,6 +345,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(result.user);
         const idToken = await result.user.getIdToken();
         axios.defaults.headers.common['Authorization'] = idToken;
+        await axios.get(`${url}/api/auth/login`);
         router.push('/');
       })
       .catch((error) => {
