@@ -10,7 +10,6 @@ import {
   signOut,
   updateProfile,
   User,
-  UserCredential,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
@@ -205,56 +204,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       });
   };
 
-  const registerWithGoogle = async (
-    fromLogin?: boolean,
-    result?: UserCredential
-  ) => {
+  const registerWithGoogle = async () => {
     setLoading(true);
-    if (fromLogin && fromLogin === true && result) {
-      const createCustomer = await axios.post(
-        `${url}/api/payment/create-customer`,
-        {
-          email: result.user.email,
-          name: result.user.displayName,
-        }
-      );
-      const docRef = doc(db, `users/${result.user.uid}`);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.data() != undefined) {
-        return;
-      }
-      await setDoc(doc(db, 'users', result.user.uid), {
-        uid: result.user.uid,
-        name: result.user.displayName,
-        email: result.user.email,
-        stripeId: createCustomer.data.customer.id,
-        createdAt: Date.now(),
-      });
-      try {
-        await axios.post(
-          `${url}/api/crm/add-person`,
-          {
-            uid: result.user.uid,
-            personData: {
-              Email: result.user.email,
-              Name: result.user.displayName,
-            },
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          addAlert('Unexpected error adding user', 'warning', 1000);
-        }
-      }
-      await axios.get(`${url}/api/auth/login`);
-      router.push('/');
-      return;
-    }
     let stripeId: null | string = null;
     await signInWithPopup(auth, provider)
       .then(async (result) => {
@@ -339,8 +290,43 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           result.user.metadata.creationTime ===
           result.user.metadata.lastSignInTime
         ) {
-          await registerWithGoogle(true, result);
-          return;
+          let stripeId = '';
+          const createCustomer = await axios.post(
+            `${url}/api/payment/create-customer`,
+            {
+              email: result.user.email,
+              name: result.user.displayName,
+            }
+          );
+          stripeId = createCustomer.data.customer.id;
+          await setDoc(doc(db, 'users', result.user.uid), {
+            uid: result.user.uid,
+            name: result.user.displayName,
+            email: result.user.email,
+            createdAt: Date.now(),
+            stripeId: createCustomer.data.customer.id,
+          });
+          try {
+            await axios.post(
+              `${url}/api/crm/add-person`,
+              {
+                uid: result.user.uid,
+                personData: {
+                  Email: result.user.email,
+                  Name: result.user.displayName,
+                },
+              },
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              }
+            );
+          } catch (error) {
+            if (error instanceof AxiosError) {
+              addAlert('Unexpected error adding user', 'warning', 500);
+            }
+          }
         }
         setUser(result.user);
         const idToken = await result.user.getIdToken();
