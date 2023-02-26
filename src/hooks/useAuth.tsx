@@ -298,6 +298,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
               name: result.user.displayName,
             }
           );
+          // eslint-disable-next-line unused-imports/no-unused-vars
           stripeId = createCustomer.data.customer.id;
           await setDoc(doc(db, 'users', result.user.uid), {
             uid: result.user.uid,
