@@ -74,21 +74,41 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               res.status(500).json({ message: 'Customer does not exist' });
             }
             const uid = customerSnap.docs[0].id;
+            let currentTokens = customerSnap.docs[0].data().subscription.tokens;
+            if (
+              currentTokens < 0 ||
+              currentTokens === null ||
+              currentTokens === undefined
+            ) {
+              currentTokens = 0;
+            }
 
             if (priceId === oneTimeIds.tier1) {
-              await admin.firestore().collection('users').doc(uid).update({
-                'subscription.tokens': 5000,
-              });
+              await admin
+                .firestore()
+                .collection('users')
+                .doc(uid)
+                .update({
+                  'subscription.tokens': currentTokens + 5000,
+                });
             }
             if (priceId === oneTimeIds.tier2) {
-              await admin.firestore().collection('users').doc(uid).update({
-                'subscription.tokens': 10000,
-              });
+              await admin
+                .firestore()
+                .collection('users')
+                .doc(uid)
+                .update({
+                  'subscription.tokens': currentTokens + 10000,
+                });
             }
             if (priceId === oneTimeIds.tier3) {
-              await admin.firestore().collection('users').doc(uid).update({
-                'subscription.tokens': 25000,
-              });
+              await admin
+                .firestore()
+                .collection('users')
+                .doc(uid)
+                .update({
+                  'subscription.tokens': currentTokens + 25000,
+                });
             }
           }
         } catch (error) {
@@ -148,7 +168,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 planId: subscription.plan?.id,
                 upgradedToTier2: false,
                 upgradedToTier3: false,
-                tokens: 200000,
+                tokens: 250000,
               },
             });
         }
@@ -313,7 +333,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     planId: subscription.plan?.id,
                     upgradedToTier2: true,
                     upgradedToTier3: true,
-                    tokens: 200000,
+                    tokens: 250000,
                   },
                 });
             }
@@ -335,7 +355,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
             if (planId === tier3Price && !upgradedToTier3) {
               await customerSnap.docs[0].ref.update({
-                subscription: { tokens: 200000 },
+                subscription: { tokens: 250000 },
               });
               await customerSnap.docs[0].ref.update({
                 upgradedToTier2: true,
@@ -388,7 +408,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     planId: subscription.plan?.id,
                     upgradedToTier2: true,
                     upgradedToTier3: true,
-                    tokens: 200000,
+                    tokens: 250000,
                   },
                 });
             }
