@@ -31,11 +31,11 @@ const SidebarCard = () => {
       case 'free':
         return 'No cost $0/month';
       case plans.tier1:
-        return '$15/month';
+        return '$10/month';
       case plans.tier2:
-        return '$60/month';
+        return '$35/month';
       case plans.tier3:
-        return '$100/month';
+        return '$75/month';
       default:
         return '';
     }
