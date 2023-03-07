@@ -18,14 +18,14 @@ const tiers: {
   {
     name: 'Starter',
     href: '#',
-    priceMonthly: 15,
+    priceMonthly: 10,
     description: 'Ideal for aspiring writers or those just starting out.',
     priceId: plans.tier1,
   },
   {
     name: 'Standard',
     href: '#',
-    priceMonthly: 60,
+    priceMonthly: 35,
     description:
       'Perfect for writers looking to take their writing to the next level.',
     priceId: plans.tier2,
@@ -33,7 +33,7 @@ const tiers: {
   {
     name: 'Professional',
     href: '#',
-    priceMonthly: 100,
+    priceMonthly: 75,
     description:
       'Tailored for professional writers who are looking to elevate their craft.',
     priceId: plans.tier3,
@@ -52,7 +52,7 @@ const features: {
     tiers: {
       Starter: '20,000 words per month',
       Standard: '100,000 words per month',
-      Professional: '200,000 words per month',
+      Professional: '250,000 words per month',
     },
   },
   {
@@ -61,21 +61,17 @@ const features: {
   },
   {
     name: 'Character creator',
-    tiers: { Starter: true, Standard: true, Professional: true },
+    tiers: { Starter: false, Standard: true, Professional: true },
   },
   {
     name: 'Story outline generator',
-    tiers: { Starter: true, Standard: true, Professional: true },
+    tiers: { Starter: false, Standard: true, Professional: true },
   },
   {
     name: '7-day money-back guarantee',
     tiers: { Starter: true, Standard: true, Professional: true },
   },
 ];
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
 
 interface Props {
   handlePlanSelect: MouseEventHandler<HTMLButtonElement>;
@@ -101,31 +97,26 @@ export default function Pricing({ handlePlanSelect }: Props) {
         ) : null}
         <h1 className='text-3xl'> Choose your plan</h1>
         <p className='text-md'>
-          You won't be charged until after your 7-day free trial. Upgrade,
-          downgrade or cancel at anytime.
+          You won't be charged. Upgrade, downgrade or cancel at anytime.
         </p>
       </div>
       <div className='mx-auto max-w-7xl bg-white py-16 sm:py-16 sm:px-6 lg:px-8'>
         {/* xs to lg */}
         <div className='mx-auto max-w-2xl space-y-16 lg:hidden'>
-          {tiers.map((tier, tierIdx) => (
+          {tiers.map((tier) => (
             <section key={tier.name}>
               <div className='mb-8 px-4'>
                 <h2 className='text-lg font-medium leading-6 text-gray-900'>
                   {tier.name}
                 </h2>
                 <p className='mt-4 text-3xl font-bold tracking-tight text-gray-900'>
-                  Free for 7 days
-                </p>
-                <p>
-                  {' '}
-                  then{' '}
-                  <span className='text-xl font-bold tracking-tight text-gray-900'>
-                    ${tier.priceMonthly}
-                  </span>{' '}
+                  ${tier.priceMonthly}
                   <span className='text-base font-medium text-gray-500'>
                     /mo
                   </span>
+                </p>
+                <p className='mt-4 mb-20 text-sm text-gray-500'>
+                  {tier.description}
                 </p>
                 {/* <p className='mt-4 text-sm text-gray-500'>{tier.description}</p> */}
                 <Button
@@ -134,8 +125,11 @@ export default function Pricing({ handlePlanSelect }: Props) {
                   onClick={onClick}
                   isLoading={loading}
                 >
-                  Try {tier.name} for free
+                  Start 5 day free trial
                 </Button>
+                <p className='mt-3 text-center text-xs text-gray-500'>
+                  No credit card required
+                </p>
               </div>
               <table className='w-full'>
                 <caption className='border-t border-gray-200 bg-gray-50 py-3 px-4 text-left text-sm font-medium text-gray-900'>
@@ -193,7 +187,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                   ))}
                 </tbody>
               </table>
-              <div
+              {/* <div
                 className={classNames(
                   tierIdx < tiers.length - 1 ? 'border-b py-5' : 'pt-5',
                   'border-t border-gray-200 px-4'
@@ -205,9 +199,9 @@ export default function Pricing({ handlePlanSelect }: Props) {
                   onClick={onClick}
                   isLoading={loading}
                 >
-                  Try {tier.name} for free
+                  Start 5 day free trial
                 </Button>
-              </div>
+              </div> */}
             </section>
           ))}
         </div>
@@ -222,8 +216,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
             ) : null}
             <h1 className='text-3xl'> Choose your plan</h1>
             <p className='text-base'>
-              You won't be charged until after your 7-day free trial. Upgrade,
-              downgrade or cancel at anytime.
+              You won't be charged. Upgrade, downgrade or cancel at anytime.
             </p>
           </div>
           <table className='mt-16 h-px w-full table-fixed'>
@@ -260,19 +253,12 @@ export default function Pricing({ handlePlanSelect }: Props) {
                   <td key={tier.name} className='h-full py-8 px-6 align-top'>
                     <div className='relative table h-full'>
                       <p className='text-3xl font-bold tracking-tight text-gray-900'>
-                        Free for 7 days
-                      </p>
-                      <p>
-                        {' '}
-                        then{' '}
-                        <span className='text-xl font-bold tracking-tight text-gray-900'>
-                          ${tier.priceMonthly}
-                        </span>{' '}
+                        ${tier.priceMonthly}
                         <span className='text-base font-medium text-gray-500'>
                           /mo
                         </span>
                       </p>
-                      <p className='mt-4 mb-16 text-sm text-gray-500'>
+                      <p className='mt-4 mb-20 text-sm text-gray-500'>
                         {tier.description}
                       </p>
                       <Button
@@ -281,9 +267,12 @@ export default function Pricing({ handlePlanSelect }: Props) {
                         onClick={onClick}
                         isLoading={loading}
                       >
-                        Try {tier.name} for free
+                        Start 5 day free trial
                       </Button>
                     </div>
+                    <p className='mt-2 text-center text-xs text-gray-500'>
+                      No credit card required
+                    </p>
                   </td>
                 ))}
               </tr>
@@ -342,7 +331,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                 ))}
               </Fragment>
             </tbody>
-            <tfoot>
+            {/* <tfoot>
               <tr className='border-t border-gray-200'>
                 <th className='sr-only' scope='row'>
                   Choose your plan
@@ -355,12 +344,12 @@ export default function Pricing({ handlePlanSelect }: Props) {
                       onClick={onClick}
                       isLoading={loading}
                     >
-                      Try {tier.name} for free
+                      Start 5 day free trial
                     </Button>
                   </td>
                 ))}
               </tr>
-            </tfoot>
+            </tfoot> */}
           </table>
         </div>
       </div>
