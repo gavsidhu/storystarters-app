@@ -35,7 +35,7 @@ export default async function handler(
         mode: 'subscription',
         allow_promotion_codes: true,
         subscription_data: {
-          trial_period_days: 7,
+          trial_period_days: 5,
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore
           trial_settings: {
