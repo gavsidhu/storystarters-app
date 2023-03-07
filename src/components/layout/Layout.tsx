@@ -120,6 +120,23 @@ export default function Layout({ children, title, subscription }: Props) {
       window.location.href = createSession.data.url;
     }
   };
+
+  if (subscription === null) {
+    return (
+      <div>
+        <div className='w-full space-x-5 py-6 px-4 text-right'>
+          <UnderlineLink href='https://uplevel-hq-llc.outseta.com/support/kb'>
+            Help Center
+          </UnderlineLink>
+          <Button className='text-right' variant='outline' onClick={logout}>
+            Logout
+          </Button>
+        </div>
+        <Pricing handlePlanSelect={handlePlanSelect} />
+      </div>
+    );
+  }
+
   if (loading || initialLoading || projectLoading) {
     return <Skeleton className='h-screen w-screen' />;
   }
@@ -162,21 +179,6 @@ export default function Layout({ children, title, subscription }: Props) {
     );
   }
 
-  if (subscription === null) {
-    return (
-      <div>
-        <div className='w-full space-x-5 py-6 px-4 text-right'>
-          <UnderlineLink href='https://uplevel-hq-llc.outseta.com/support/kb'>
-            Help Center
-          </UnderlineLink>
-          <Button className='text-right' variant='outline' onClick={logout}>
-            Logout
-          </Button>
-        </div>
-        <Pricing handlePlanSelect={handlePlanSelect} />
-      </div>
-    );
-  }
   return (
     <>
       <Alert />
