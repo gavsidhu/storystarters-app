@@ -23,7 +23,7 @@ export default async function handler(
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
         billing_address_collection: 'auto',
-        success_url: `${url}/?success=true&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${url}/login?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${url}?canceled=true`,
         line_items: [
           {
