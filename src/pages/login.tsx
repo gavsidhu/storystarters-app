@@ -1,4 +1,6 @@
+import { Spinner } from 'flowbite-react';
 import Image from 'next/image';
+import { AuthAction, withAuthUser } from 'next-firebase-auth';
 import React from 'react';
 
 import LoginForm from '@/components/auth/LoginForm';
@@ -30,4 +32,12 @@ const Login = () => {
   );
 };
 
-export default Login;
+const LoginLoader = () => {
+  return <Spinner />;
+};
+
+export default withAuthUser({
+  whenUnauthedBeforeInit: AuthAction.SHOW_LOADER,
+  whenAuthed: AuthAction.REDIRECT_TO_APP,
+  LoaderComponent: LoginLoader,
+})(Login);
