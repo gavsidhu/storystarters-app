@@ -14,14 +14,14 @@ import authErrors from '@/constant/authErrors';
 import { AlertContext } from '@/context/AlertState';
 
 const LoginForm = () => {
-  const { signInWithEmail, signInWithGoogle, loading } = useAuth();
+  const { signInWithEmail, signInWithGoogle } = useAuth();
   const alertContext = useContext(AlertContext);
   const [showModal, setShowModal] = useState(false);
 
   const handleShowModal = (value: boolean) => {
     setShowModal(value);
   };
-  // const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   //Form validation
   const {
     register,
@@ -30,34 +30,34 @@ const LoginForm = () => {
   } = useForm();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-console
   const onSubmit = async (data: FieldValues) => {
-    // setLoading(true)
+    setLoading(true);
     try {
       await signInWithEmail(data.email, data.password);
     } catch (error) {
-      // setLoading(false)
+      setLoading(false);
       if (error instanceof AxiosError) {
-        // setLoading(false)
+        setLoading(false);
         alertContext.addAlert(error.code as string, 'error', 3000);
       }
       if (error instanceof FirebaseError) {
-        // setLoading(false)
+        setLoading(false);
         alertContext.addAlert(authErrors[error.code] as string, 'error', 5000);
       }
     }
   };
 
   const googleSubmit = async () => {
-    // setLoading(true)
+    setLoading(true);
     try {
       await signInWithGoogle();
     } catch (error) {
-      // setLoading(false)
+      setLoading(false);
       if (error instanceof AxiosError) {
-        // setLoading(false)
+        setLoading(false);
         alertContext.addAlert(error.code as string, 'error', 3000);
       }
       if (error instanceof FirebaseError) {
-        // setLoading(false)
+        setLoading(false);
         alertContext.addAlert(error.message as string, 'error', 3000);
       }
     }
