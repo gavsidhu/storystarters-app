@@ -1,10 +1,10 @@
-import { Spinner } from 'flowbite-react';
 import Image from 'next/image';
 import { AuthAction, withAuthUser } from 'next-firebase-auth';
 import React from 'react';
 
 import LoginForm from '@/components/auth/LoginForm';
 import PrimaryLink from '@/components/links/PrimaryLink';
+import Skeleton from '@/components/Skeleton';
 
 const Login = () => {
   return (
@@ -33,7 +33,7 @@ const Login = () => {
 };
 
 const LoginLoader = () => {
-  return <Spinner />;
+  return <Skeleton className='h-screen w-screen' />;
 };
 
 export default withAuthUser({

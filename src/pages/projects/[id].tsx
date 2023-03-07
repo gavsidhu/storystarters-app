@@ -453,7 +453,6 @@ const Project = () => {
                     <div className='flex w-1/3 flex-row space-x-2'>
                       <input
                         type='text'
-                        name='text'
                         id='text'
                         className='block w-full border-0 border-b border-transparent bg-gray-50 focus:border-primary-500 focus:ring-0 sm:text-sm'
                         defaultValue={activeDocument?.text}
