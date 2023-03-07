@@ -12,6 +12,7 @@ import useAuth from '@/hooks/useAuth';
 import Button from '@/components/buttons/Button';
 import Alert from '@/components/layout/Alert';
 import Layout from '@/components/layout/Layout';
+import RestrictedAccess from '@/components/payments/RestricedAccess';
 
 import { plans } from '@/constant/plans';
 import { url } from '@/constant/url';
@@ -31,6 +32,15 @@ const OutlineGenerator = ({ subscription }: Props) => {
   const [textInput, setTextInput] = useState('');
   const [outline, setOutline] = useState('');
   const alertContext = useContext(AlertContext);
+
+  if (subscription.plan === plans.tier1) {
+    return (
+      <RestrictedAccess
+        subscription={subscription}
+        title='You current plan does not have access to this tool.'
+      />
+    );
+  }
 
   const generateOutline = async () => {
     setLoading(true);
@@ -131,15 +141,6 @@ export const getServerSideProps = withAuthUserTokenSSR({
   const data = await admin.firestore().doc(`users/${AuthUser.id}`).get();
 
   if (!data.data()?.subscription) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-
-  if (!data.data()?.subscription.planId) {
     return {
       props: {
         subscription,

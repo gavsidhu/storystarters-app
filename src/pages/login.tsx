@@ -21,7 +21,7 @@ const Login = () => {
         <p className='mt-2 text-center text-sm text-gray-600'>
           Or{' '}
           <PrimaryLink href='/register' openNewTab={false}>
-            Create an account
+            Start your free trial
           </PrimaryLink>
         </p>
       </div>

@@ -520,7 +520,7 @@ export const getServerSideProps = withAuthUserTokenSSR({
   if (!data.data()?.subscription) {
     return {
       redirect: {
-        destination: '/login',
+        destination: '/',
         permanent: false,
       },
     };
@@ -546,7 +546,7 @@ export const getServerSideProps = withAuthUserTokenSSR({
   ) {
     return {
       redirect: {
-        destination: '/login',
+        destination: '/',
         permanent: false,
       },
     };

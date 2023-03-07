@@ -48,15 +48,6 @@ export const getServerSideProps = withAuthUserTokenSSR({
 
   if (!data.data()?.subscription) {
     return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-
-  if (!data.data()?.subscription.planId) {
-    return {
       props: {
         subscription,
       },
