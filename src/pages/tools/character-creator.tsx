@@ -186,7 +186,7 @@ const CharacterCreator = ({ subscription }: Props) => {
             </div>
             <div>
               <Button onClick={generateCharacter} isLoading={loading}>
-                Generate outline{' '}
+                Generate Character{' '}
                 <span>
                   <HiOutlineArrowPath className=' ml-2 h-4 w-4' />
                 </span>
