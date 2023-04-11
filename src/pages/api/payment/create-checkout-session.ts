@@ -36,13 +36,8 @@ export default async function handler(
         allow_promotion_codes: true,
         subscription_data: {
           trial_period_days: 5,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //@ts-ignore
-          trial_settings: {
-            end_behavior: { missing_payment_method: 'pause' },
-          },
         },
-        payment_method_collection: 'if_required',
+        payment_method_collection: 'always',
       });
 
       res.json({ url: session.url });
