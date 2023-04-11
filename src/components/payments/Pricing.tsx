@@ -97,7 +97,8 @@ export default function Pricing({ handlePlanSelect }: Props) {
         ) : null}
         <h1 className='text-3xl'> Choose your plan</h1>
         <p className='text-md'>
-          You won't be charged. Upgrade, downgrade or cancel at anytime.
+          You won't be charged until after your free trial. Upgrade, downgrade
+          or cancel at anytime.
         </p>
       </div>
       <div className='mx-auto max-w-7xl bg-white py-16 sm:py-16 sm:px-6 lg:px-8'>
@@ -128,7 +129,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                   Start 5 day free trial
                 </Button>
                 <p className='mt-3 text-center text-xs text-gray-500'>
-                  No credit card required
+                  No Commitments &#9679; Cancel Anytime
                 </p>
               </div>
               <table className='w-full'>
@@ -216,7 +217,8 @@ export default function Pricing({ handlePlanSelect }: Props) {
             ) : null}
             <h1 className='text-3xl'> Choose your plan</h1>
             <p className='text-base'>
-              You won't be charged. Upgrade, downgrade or cancel at anytime.
+              You won't be charged until after your free trial. Upgrade,
+              downgrade or cancel at anytime.
             </p>
           </div>
           <table className='mt-16 h-px w-full table-fixed'>
@@ -271,7 +273,7 @@ export default function Pricing({ handlePlanSelect }: Props) {
                       </Button>
                     </div>
                     <p className='mt-2 text-center text-xs text-gray-500'>
-                      No credit card required
+                      No Commitments &#9679; Cancel Anytime
                     </p>
                   </td>
                 ))}
